@@ -1,72 +1,68 @@
 #include "hand.h"
 
-SurrenderHand::SurrenderHand(int bet)
-{
-   starting_bet = bet;
-};
+Hand::Hand(){}
 
-int SurrenderHand::decide_hand(int dealer_count)
+Hand::Hand(Card first)
 {
-   return -starting_bet*0.5;
+   this->cards.push_back(first);
 }
 
-BJHand::BJHand(int bet, bool bj3_2)
+
+Hand::Hand(Card first, Card second)
 {
-   starting_bet = bet;
-   pays_3_to_2 = bj3_2;
+   this->cards.push_back(first);
+   this->cards.push_back(second);
 }
 
-// TODO: if dealer has bj?
-int BJHand::decide_hand(int dealer_count)
+Hand::Hand(std::vector<Card> cards)
 {
-   return pays_3_to_2 ? starting_bet * 1.5 : starting_bet * (6 / 5.0);
+   this->cards.insert(this->cards.end(), cards.begin(), cards.end());
 }
 
-DoubleHand::DoubleHand(int bet, int player_count)
-{
-   starting_bet = bet;
-   this->player_count = player_count;
+void Hand::AddCard(Card card) {
+   cards.push_back(card);
 }
 
-//TODO: if tie??
-int DoubleHand::decide_hand(int dealer_count)
+int Hand::Value()
 {
-   if (player_count == dealer_count) {
-      return 0;
+   int value = 0;
+   int ace_count = 0;
+   for (const auto &card : cards)
+   {
+      value += card;
+      if (card == 11)
+         ace_count++;
    }
-   return starting_bet*2*(player_count>dealer_count ? 1 : -1);
-}
-
-  SplitHand::SplitHand(int bet, Hand *a, Hand *b){
-   starting_bet = bet;
-   this->a = a;
-   this->b = b;
-  }
-   int SplitHand::decide_hand(int dealer_count){
-      return a->decide_hand(dealer_count) + b->decide_hand(dealer_count);
+   while (value > 21 && ace_count > 0)
+   {
+      ace_count--;
+      value -= 10;
    }
-
-
-BustHand::BustHand(int bet)
-{
-   starting_bet = bet;
-};
-
-int BustHand::decide_hand(int dealer_count)
-{
-   return -starting_bet;
+   return value;
 }
 
-ToBeDecidedHand::ToBeDecidedHand(int bet, int player_count)
+bool Hand::CanSplit()
 {
-   starting_bet = bet;
-   this->player_count = player_count;
+   return (cards.size() == 2) && (cards[0] == cards[1]);
 }
 
-int ToBeDecidedHand::decide_hand(int dealer_count)
+bool Hand::IsBlackJack()
 {
-   if (player_count == dealer_count) {
-      return 0;
+   return (cards.size() == 2) && ((cards[0] + cards[1]) == 21);
+}
+
+std::pair<Hand, Hand> Hand::Split()
+{
+   return {Hand{cards.front()}, Hand{cards.back()}};
+}
+
+bool Hand::Bust(){
+   return Value() > 21;
+}
+bool Hand::IsSoft(){
+   for(const auto& card : cards){
+      if (card == ACE)
+         return true;
    }
-   return starting_bet*(player_count>dealer_count ? 1 : -1);
+   return false;
 }

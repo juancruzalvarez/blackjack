@@ -1,42 +1,20 @@
 #include <random>
 
 #include "game.h"
+#include "card.h"
+#include "round.h"
 #include "hand.h"
 
-Card draw(std::vector<Card> &deck)
+Game::Game(Rules rules, std::vector<Player *> players)
 {
-   Card c = deck.back();
-   deck.pop_back();
-   return c;
+   this->shoe = Shoe(rules.decks);
+   this->rounds_played = 0;
+   this->players = players;
+   this->house_profit = 0;
+   this->rules = rules;
 }
 
-std::vector<Card> shuffle(int decks)
-{
-   std::vector<Card> deck;
-   for (int i = 0; i < decks; i++)
-   {
-      deck.insert(deck.end(), &DECK[0], &DECK[51]);
-   }
-
-   for (int i = 0; i < deck.size(); i++)
-   {
-      int r = i + (rand() % (deck.size() - i));
-      std::swap(deck[i], deck[r]);
-   }
-   return deck;
-}
-
-Game new_game(Rules rules, std::vector<Player *> players)
-{
-   Game game;
-   game.cards = shuffle(rules.decks);
-   game.hands_played = 0;
-   game.players = players;
-   game.profit = 0;
-   game.rules = rules;
-}
-
-// hand stages:
+// round stages:
 // place bets
 // deal all cards
 // check dealer bj
@@ -44,26 +22,81 @@ Game new_game(Rules rules, std::vector<Player *> players)
 // dealer plays its hand
 // dealer pays or collects each hand
 
-void do_hand(Game &game)
+void Game::do_round()
 {
-   Card dealer_up = draw(game.cards), dealer_down = draw(game.cards);
-   std::vector<Card> player_cards;
-
-   for (int i = 0; i < game.players.size() * 2; i++)
+   int bets[kMaxPlayersPerTable];
+   Hand hands[kMaxPlayersPerTable];
+   Round* rounds [kMaxPlayersPerTable];
+   for (int i = 0; i < players.size(); i++)
    {
-      player_cards.push_back(draw(game.cards));
+      bets[i] = players[i]->strat->bet(rules.min_bet, rules.max_bet);
+   }
+   Card dealer_up = draw_card();
+   Card dealer_down = shoe.draw_card(); // we dont use game draw_card here becouse the players do not see this card until the end of the round.
+   Hand dealer_hand = Hand {dealer_up, dealer_down};
+   // all player cards gets drawed before the first player gets to play.
+   // this is not done in the order that is done in a traditional casino but its irrelevant to the result of the game so it doesent matter.
+   for (int i = 0; i < players.size(); i++)
+   {
+      hands[i] = Hand{draw_card(), draw_card()};
    }
 
-   for (int i = 0; i < game.players.size(); i++)
+   // check for dealer bj.
+   if (dealer_up == 11 || dealer_up == 10)
    {
-      game.players[i]->strat->see_card(dealer_up);
-      game.players[i]->strat->see_card(dealer_down);
-      game.players[i]->strat->see_cards(player_cards);
+      if (rules.allows_insurance && dealer_up == 11) // offer insurance if up card is an ace and if rules allow it.
+      {
+         for (int i = 0; i < players.size(); i++)
+         {
+            if (players[i]->strat->wants_insurance())
+            {
+               if (dealer_hand.IsBlackJack())
+               {
+                  players[i]->current_chips += bets[i];
+                  house_profit -= bets[i];
+               }
+               else
+               {
+                  players[i]->current_chips -= bets[i] * 0.5;
+                  house_profit += bets[i] * 0.5;
+               }
+            }
+         }
+      }
 
-      Card p_1 = player_cards[2 * i], p_2 = player_cards[2 * i + 1];
-      int ace_count = (p_1 == 1) + (p_2 == 1);
-      PlayerAction action = game.players[i]->strat->play(p_1 + p_2, ace_count, dealer_up, p_1 == p_2, true, game.rules.can_surrender);
+      if (dealer_hand.IsBlackJack())
+      {
+         // if dealer has blackjack take all the bets of the players that dont have blackjack.
+         for (int i = 0; i < players.size(); i++)
+         {
+            if (hands[i].IsBlackJack())
+            {
+               players[i]->current_chips += bets[i];
+            }
+            else
+            {
+               house_profit += bets[i];
+            }
+         }
+         for (const auto& p : players)
+            p->strat->see_card(dealer_down);
+         return;
+      }
    }
+
+   for (int i = 0; i < players.size(); i++)
+   {
+      rounds[i] = player_round(players[i], hands[i], bets[i], dealer_up, true, true, true, 0);
+   }
+
+   int dealer_value = dealer_round(dealer_hand);
+   for (int i = 0; i < players.size(); i++)
+   {
+      int round_result = rounds[i]->decide_round(dealer_value);
+      house_profit -= round_result;
+      players[i]->current_chips += round_result;
+   }
+   
 }
 
 // player hand round stages:
@@ -75,69 +108,80 @@ void do_hand(Game &game)
 // else the player hits until they bust(go over 21) or they stand.
 // if they bust the hand is lost automatically
 // if they stand the hand is decided against the dealer.
-Hand *player_hand(Game &game, Player *player, int bet, int current_count, int ace_count, Card dealer_up, bool can_split, bool can_double, bool can_surrender)
+Round *Game::player_round(Player *player, Hand player_hand, int bet, Card dealer_up, bool can_split, bool can_double, bool can_surrender, int splits_done)
 {
-   Hand *ret;
-   std::vector<Card> cards_seen;
-
-   if (current_count == 21)
+   Round *ret;
+   if (player_hand.IsBlackJack())
    {
-      return new BJHand{bet, game.rules.bj_3_to_2};
+      return new BJRound{bet, rules.bj_3_to_2};
    }
 
-   PlayerAction action = player->strat->play(current_count, ace_count, dealer_up, true, true, true);
+   PlayerAction action = player->strat->play(player_hand, dealer_up, true, true, true);
+   std::pair<Hand,Hand> splited_hand;
    switch (action)
    {
+      
    case PlayerAction::SURRENDER:
-      ret = new SurrenderHand{bet};
-      break;
+      return new SurrenderRound{bet};
    case PlayerAction::DOUBLE:
-      ret new DoubleHand{bet, current_count};
-      break;
+      player_hand.AddCard(draw_card());
+      return new DoubleRound{bet, player_hand.Value()};
    case PlayerAction::SPLIT:
-      Card first_hand_card = draw(game.cards), second_hand_card = draw(game.cards);
-      cards_seen.push_back(first_hand_card);
-      cards_seen.push_back(second_hand_card);
-      Hand *first_hand = player_hand(game,
-                                     player,
-                                     bet,
-                                     (current_count / 2) + first_hand_card,
-                                     (ace_count / 2) + (first_hand_card == 1),
-                                     dealer_up,
-                                     true,
-                                     game.rules.can_DAS,
-                                     false);
-      Hand *second_hand = player_hand(game,
-                                      player,
-                                      bet,
-                                      (current_count / 2) + second_hand_card,
-                                      (ace_count / 2) + (second_hand_card == 1),
-                                      dealer_up,
-                                      true,
-                                      game.rules.can_DAS,
-                                      false);
-      ret = new SplitHand{bet, first_hand, second_hand};
-      break;
+      splited_hand = player_hand.Split();
+      splited_hand.first.AddCard(draw_card());
+      splited_hand.second.AddCard(draw_card());
+      Round *first_round = player_round(player,
+                                        splited_hand.first,
+                                        bet,
+                                        dealer_up,
+                                        splits_done < rules.max_splits,
+                                        rules.can_DAS,
+                                        false,
+                                        splits_done + 1);
+      Round *second_round = player_round(player,
+                                         splited_hand.second,
+                                         bet,
+                                         dealer_up,
+                                         splits_done < rules.max_splits,
+                                         rules.can_DAS,
+                                         false,
+                                         splits_done + 1);
+      return new SplitRound{bet, first_round, second_round};
    case PlayerAction::STAND:
-      ret = new ToBeDecidedHand{bet, current_count};
-      break;
+      return new ToBeDecidedRound{bet, player_hand.Value()};
    case PlayerAction::HIT:
-      do {
-         Card new_card = draw(game.cards);
-         cards_seen.push_back(new_card);
-         current_count += new_card;
-         if (current_count > 21) {
-            return new BustHand {bet};
+      do
+      {
+         player_hand.AddCard(draw_card());
+         if (player_hand.Value() > 21)
+         {
+            return new BustRound{bet};
          }
-         action = player->strat->play(current_count, ace_count + (new_card == 1), dealer_up, false, false, false);
-      }while(action == PlayerAction::HIT);
-      ret = new ToBeDecidedHand{bet, current_count};
-      break;
+         action = player->strat->play(player_hand, dealer_up, false, false, false);
+      } while (action == PlayerAction::HIT);
+      return new ToBeDecidedRound{bet, player_hand.Value()};
    }
+}
 
-   for(const auto& p : game.players){
-      p->strat->see_cards(cards_seen);
-   }
+int Game::dealer_round(Hand dealer_hand) {
+   while(dealer_hand.Value() < 17)
+      dealer_hand.AddCard(draw_card());
    
-   return ret;
+   if(dealer_hand.Value() == 17 && dealer_hand.IsSoft() && rules.dealer_hit_s17)
+      dealer_hand.AddCard(draw_card());
+
+   while(dealer_hand.Value() < 17)
+      dealer_hand.AddCard(draw_card());
+
+   return dealer_hand.Value();
+}
+
+Card Game::draw_card()
+{
+   Card c = shoe.draw_card();
+   for (const auto &p : players)
+   {
+      p->strat->see_card(c);
+   }
+   return c;
 }
