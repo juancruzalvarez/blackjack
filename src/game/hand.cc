@@ -1,12 +1,13 @@
 #include "hand.h"
 
-Hand::Hand(){}
+namespace blackjack {
+
+Hand::Hand() {}
 
 Hand::Hand(Card first)
 {
    this->cards.push_back(first);
 }
-
 
 Hand::Hand(Card first, Card second)
 {
@@ -19,7 +20,8 @@ Hand::Hand(std::vector<Card> cards)
    this->cards.insert(this->cards.end(), cards.begin(), cards.end());
 }
 
-void Hand::AddCard(Card card) {
+void Hand::AddCard(Card card)
+{
    cards.push_back(card);
 }
 
@@ -40,7 +42,6 @@ int Hand::Value()
       ace_count--;
       value -= 10;
    }
-
    return value;
 }
 
@@ -59,14 +60,30 @@ std::pair<Hand, Hand> Hand::Split()
    return {Hand{cards.front()}, Hand{cards.back()}};
 }
 
-bool Hand::Bust(){
+bool Hand::Bust()
+{
    return Value() > 21;
 }
 
-bool Hand::IsSoft(){
-   for(const auto& card : cards){
-      if (card == ACE)
-         return true;
+bool Hand::IsSoft()
+{
+   int value = 0;
+   int ace_count = 0;
+   // First treat all aces as 11.
+   for (const auto &card : cards)
+   {
+      value += card;
+      if (card == 11)
+         ace_count++;
    }
-   return false;
+   // If the value of the hand excedes 21, and there are aces, treat them as 1.
+   while (value > 21 && ace_count > 0)
+   {
+      ace_count--;
+      value -= 10;
+   }
+   //ace_count now has the number of aces that can be treated as a 1 or as an 11 without busting.
+   return ace_count>0;
+}
+
 }

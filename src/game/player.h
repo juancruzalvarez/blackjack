@@ -1,7 +1,9 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "strategy.h"
+#include "../strategy/strategy.h"
+
+namespace blackjack {
 
 struct Player
 {
@@ -9,5 +11,7 @@ struct Player
    int current_chips;
    Strategy *strat;
 };
+
+}
 
 #endif

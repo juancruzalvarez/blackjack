@@ -1,4 +1,6 @@
-#include "hand.h"
+#include "round.h"
+
+namespace blackjack {
 
 SurrenderRound::SurrenderRound(int bet)
 {
@@ -69,4 +71,6 @@ int ToBeDecidedRound::decide_round(int dealer_count)
       return 0;
    }
    return starting_bet*(player_count>dealer_count ? 1 : -1);
+}
+
 }

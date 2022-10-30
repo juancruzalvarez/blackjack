@@ -5,6 +5,9 @@
 #include "round.h"
 #include "hand.h"
 
+namespace blackjack {
+
+
 Game::Game(Rules rules, std::vector<Player *> players)
 {
    this->shoe = Shoe(rules.decks);
@@ -22,7 +25,7 @@ Game::Game(Rules rules, std::vector<Player *> players)
 // Dealer plays its hand
 // Dealer pays or collects depending on the result of each player round.
 
-void Game::do_round()
+void Game::DoRound()
 {
    int bets[kMaxPlayersPerTable];
    Hand hands[kMaxPlayersPerTable];
@@ -30,15 +33,16 @@ void Game::do_round()
    for (int i = 0; i < players.size(); i++)
    {
       bets[i] = players[i]->strat->bet(rules.min_bet, rules.max_bet);
+      players[i]->current_chips -= bets[i];
    }
-   Card dealer_up = draw_card();
-   Card dealer_down = shoe.draw_card(); // We dont use game draw_card here becouse the players do not see this card until the end of the round.
+   Card dealer_up = DrawCard();
+   Card dealer_down = shoe.DrawCard(); // We dont use game DrawCard here becouse the players do not see this card until the end of the round.
    Hand dealer_hand = Hand{dealer_up, dealer_down};
    // All player cards gets drawed before the first player gets to play.
    // This is not done in the order that is done in a traditional casino but its irrelevant to the result of the game.
    for (int i = 0; i < players.size(); i++)
    {
-      hands[i] = Hand{draw_card(), draw_card()};
+      hands[i] = Hand{DrawCard(), DrawCard()};
    }
 
    // Check for dealer bj.
@@ -95,11 +99,11 @@ void Game::do_round()
    // Play all the players rounds
    for (int i = 0; i < players.size(); i++)
    {
-      rounds[i] = player_round(players[i], hands[i], bets[i], dealer_up, true, true, true, 0);
+      rounds[i] = DoPlayerRound(players[i], hands[i], bets[i], dealer_up, true, true, true, 0);
    }
 
    // Play the dealers round.
-   int dealer_value = dealer_round(dealer_hand);
+   int dealer_value = DoDealerRound(dealer_hand);
 
    // Dealer collects or pays depending on the round result.
    for (int i = 0; i < players.size(); i++)
@@ -108,6 +112,10 @@ void Game::do_round()
       // decide_round returns the value of the round for the player.
       house_profit -= round_result;
       players[i]->current_chips += round_result;
+   }
+
+   if ( shoe.GetShoePenetration() > rules.penetration_before_shuffle) {
+      shoe.Shuffle();
    }
 }
 
@@ -120,7 +128,7 @@ void Game::do_round()
 // else the player hits until they bust(go over 21) or they stand.
 // If they bust, the hand is lost automatically
 // If they stand the hand is decided against the dealer.
-Round *Game::player_round(Player *player, Hand player_hand, int bet, Card dealer_up, bool can_split, bool can_double, bool can_surrender, int splits_done)
+Round *Game::DoPlayerRound(Player *player, Hand player_hand, int bet, Card dealer_up, bool can_split, bool can_double, bool can_surrender, int splits_done)
 {
    if (player_hand.IsBlackJack())
    {
@@ -132,17 +140,20 @@ Round *Game::player_round(Player *player, Hand player_hand, int bet, Card dealer
    switch (action)
    {
    case PlayerAction::SURRENDER:
+   {
       return new SurrenderRound{bet};
-
+   }
    case PlayerAction::DOUBLE:
-      player_hand.AddCard(draw_card());
+   {
+      player_hand.AddCard(DrawCard());
       return new DoubleRound{bet, player_hand.Value()};
-
+   }
    case PlayerAction::SPLIT:
+   {
       splited_hand = player_hand.Split();
-      splited_hand.first.AddCard(draw_card());
-      splited_hand.second.AddCard(draw_card());
-      Round *first_round = player_round(player,
+      splited_hand.first.AddCard(DrawCard());
+      splited_hand.second.AddCard(DrawCard());
+      Round *first_round = DoPlayerRound(player,
                                         splited_hand.first,
                                         bet,
                                         dealer_up,
@@ -150,7 +161,7 @@ Round *Game::player_round(Player *player, Hand player_hand, int bet, Card dealer
                                         rules.can_DAS,
                                         false,
                                         splits_done + 1);
-      Round *second_round = player_round(player,
+      Round *second_round = DoPlayerRound(player,
                                          splited_hand.second,
                                          bet,
                                          dealer_up,
@@ -159,14 +170,16 @@ Round *Game::player_round(Player *player, Hand player_hand, int bet, Card dealer
                                          false,
                                          splits_done + 1);
       return new SplitRound{bet, first_round, second_round};
-
+   }
    case PlayerAction::STAND:
+   {
       return new ToBeDecidedRound{bet, player_hand.Value()};
-
+   }
    case PlayerAction::HIT:
+   {
       do
       {
-         player_hand.AddCard(draw_card());
+         player_hand.AddCard(DrawCard());
          if (player_hand.Bust())
          {
             return new BustRound{bet};
@@ -177,27 +190,30 @@ Round *Game::player_round(Player *player, Hand player_hand, int bet, Card dealer
 
       return new ToBeDecidedRound{bet, player_hand.Value()};
    }
+   }
 }
 
 // The dealer plays the same way each round.
 // He cant split, double or surrender,
 // and he must hit until his hand's value is atleast 17.
 // Depending on the rules he might or might not hit a soft 17.
-int Game::dealer_round(Hand dealer_hand)
+int Game::DoDealerRound(Hand dealer_hand)
 {
    while (dealer_hand.Value() < 17 || (dealer_hand.Value() == 17 && dealer_hand.IsSoft() && rules.dealer_hit_s17))
-      dealer_hand.AddCard(draw_card());
+      dealer_hand.AddCard(DrawCard());
 
    return dealer_hand.Value();
 }
 
 // draws a card from the shoe and shows it to all players.
-Card Game::draw_card()
+Card Game::DrawCard()
 {
-   Card c = shoe.draw_card();
+   Card c = shoe.DrawCard();
    for (const auto &p : players)
    {
       p->strat->see_card(c);
    }
    return c;
+}
+
 }

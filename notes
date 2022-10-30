@@ -1,0 +1,1 @@
+ srand(time(0))  should be called at the start of main

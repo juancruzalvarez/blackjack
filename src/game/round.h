@@ -1,7 +1,8 @@
 #ifndef ROUND_H
 #define ROUND_H
 
-#include "game.h"
+
+namespace blackjack {
 
 enum class RoundResult
 {
@@ -74,5 +75,7 @@ public:
 private:
    int player_count;
 };
+
+}
 
 #endif

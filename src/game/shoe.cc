@@ -1,5 +1,7 @@
 #include "shoe.h"
 
+#include <iostream>
+namespace blackjack {
 
 Shoe::Shoe()
 {
@@ -9,19 +11,19 @@ Shoe::Shoe()
 Shoe::Shoe(int deck_count)
 {
    this->deck_count = deck_count;
-   shuffle();
+   Shuffle();
 }
 
-void Shoe::shuffle()
+void Shoe::Shuffle()
 {
    std::vector<Card> new_shoe;
-   // add deck_count ammount of full decks to the shoe.
+   // Add deck_count ammount of full decks to the shoe.
    for (int i = 0; i < deck_count; i++)
    {
-      new_shoe.insert(new_shoe.end(), &kFullDeck[0], &kFullDeck[51]);
+      new_shoe.insert(new_shoe.end(), &kFullDeck[0], &kFullDeck[52]);
    }
 
-   // shuffle the shoe, by randomly changing the position of the cards.
+   // Shuffle the shoe, by randomly changing the position of the cards.
    for (int i = 0; i < new_shoe.size(); i++)
    {
       int r = i + (rand() % (new_shoe.size() - i));
@@ -31,14 +33,16 @@ void Shoe::shuffle()
    cards = new_shoe;
 }
 
-Card Shoe::draw_card()
+Card Shoe::DrawCard()
 {
    Card ret = cards.back();
    cards.pop_back();
    return ret;
 }
 
-double Shoe::current_penetration()
+double Shoe::GetShoePenetration()
 {
-   return cards.size() / double(deck_count * kCardsPerDeck);
+   return 1 - cards.size() / double(deck_count * kCardsPerDeck);
+}
+
 }
