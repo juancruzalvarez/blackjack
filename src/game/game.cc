@@ -32,7 +32,7 @@ void Game::DoRound()
    Round *rounds[kMaxPlayersPerTable];
    for (int i = 0; i < players.size(); i++)
    {
-      bets[i] = players[i]->strat->bet(rules.min_bet, rules.max_bet);
+      bets[i] = players[i]->strategy->bet(rules.min_bet, rules.max_bet);
       players[i]->current_chips -= bets[i];
    }
    Card dealer_up = DrawCard();
@@ -53,7 +53,7 @@ void Game::DoRound()
          for (int i = 0; i < players.size(); i++)
          {
             // Insurance bet is half of the players bet, and it pays 2:1
-            if (players[i]->strat->wants_insurance())
+            if (players[i]->strategy->wants_insurance())
             {
                if (dealer_hand.IsBlackJack())
                {
@@ -64,7 +64,7 @@ void Game::DoRound()
                }
                else
                {
-                  // Dealer doesent have blackjack, so the house losses the insurance bet, wich is half of the players original bet.
+                  // Dealer doesent have blackjack, so the player losses the insurance bet, wich is half of their original bet.
                   players[i]->current_chips -= bets[i] * 0.5;
                   house_profit += bets[i] * 0.5;
                }
@@ -89,7 +89,7 @@ void Game::DoRound()
 
          // Show all players the dealers down card.
          for (const auto &p : players)
-            p->strat->see_card(dealer_down);
+            p->strategy->see_card(dealer_down);
 
          // After this the round is over.
          return;
@@ -135,8 +135,8 @@ Round *Game::DoPlayerRound(Player *player, Hand player_hand, int bet, Card deale
       return new BJRound{bet, rules.bj_3_to_2};
    }
 
-   PlayerAction action = player->strat->play(player_hand, dealer_up, true, true, true);
-   std::pair<Hand, Hand> splited_hand;
+   PlayerAction action = player->strategy->play(player_hand, dealer_up, true, true, true);
+   
    switch (action)
    {
    case PlayerAction::SURRENDER:
@@ -150,7 +150,7 @@ Round *Game::DoPlayerRound(Player *player, Hand player_hand, int bet, Card deale
    }
    case PlayerAction::SPLIT:
    {
-      splited_hand = player_hand.Split();
+      std::pair<Hand, Hand> splited_hand = player_hand.Split();
       splited_hand.first.AddCard(DrawCard());
       splited_hand.second.AddCard(DrawCard());
       Round *first_round = DoPlayerRound(player,
@@ -185,7 +185,7 @@ Round *Game::DoPlayerRound(Player *player, Hand player_hand, int bet, Card deale
             return new BustRound{bet};
          }
          // After hitting the player cant split, double or surrender.
-         action = player->strat->play(player_hand, dealer_up, false, false, false);
+         action = player->strategy->play(player_hand, dealer_up, false, false, false);
       } while (action == PlayerAction::HIT);
 
       return new ToBeDecidedRound{bet, player_hand.Value()};
@@ -211,7 +211,7 @@ Card Game::DrawCard()
    Card c = shoe.DrawCard();
    for (const auto &p : players)
    {
-      p->strat->see_card(c);
+      p->strategy->see_card(c);
    }
    return c;
 }

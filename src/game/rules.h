@@ -13,7 +13,7 @@ namespace blackjack {
       bool allows_insurance;            // If dealer's up card is an ace all players are offered to make insurance bet, pays 2:1
       bool can_hit_after_spliting_aces; // Can the player hit after spliting aces?
       int max_splits;                   // Max ammount of times a player can split a hand in a particular round.
-      int min_bet, max_bet;             // Netting range.
+      int min_bet, max_bet;             // Betting range.
       float penetration_before_shuffle; // What percentaje of the cards are used before the cards are shuffled again.  (0.0 : 1.0)
    };
 

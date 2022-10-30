@@ -9,7 +9,7 @@ struct Player
 {
    int starting_chips;
    int current_chips;
-   Strategy *strat;
+   Strategy *strategy;
 };
 
 }
