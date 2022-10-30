@@ -27,17 +27,20 @@ int Hand::Value()
 {
    int value = 0;
    int ace_count = 0;
+   // First treat all aces as 11.
    for (const auto &card : cards)
    {
       value += card;
       if (card == 11)
          ace_count++;
    }
+   // If the value of the hand excedes 21, and there are aces, treat them as 1.
    while (value > 21 && ace_count > 0)
    {
       ace_count--;
       value -= 10;
    }
+
    return value;
 }
 
@@ -59,6 +62,7 @@ std::pair<Hand, Hand> Hand::Split()
 bool Hand::Bust(){
    return Value() > 21;
 }
+
 bool Hand::IsSoft(){
    for(const auto& card : cards){
       if (card == ACE)
