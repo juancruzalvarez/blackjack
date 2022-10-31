@@ -1,0 +1,6 @@
+#hard totals:
+H17+: S # stand hard 17 and above.
+H16-13: S S S S S H H H H H
+H12: H H S S S H H H H H
+H11: 0DH # always double on hard 11
+H10: 

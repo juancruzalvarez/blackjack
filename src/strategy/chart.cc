@@ -138,11 +138,9 @@ ChartError Chart::Init(std::string path)
    remove_comments(file_content);
    auto splited = split(file_content);
    int current_line = 0;
-   //read hard totals:
-   for(int total = 20; total>=4; total--)
-   {  
-      if(current_line >= splited.size())
-         return ChartError::FILE_INVALID;
+   int hard_total = 20, soft_total = 20;
+   //read hard and soft totals:
+   while(current_line < splited.size() && hard_total >= 4 && soft_total >= 12){
       auto line_content = splited[current_line];
       switch (line_content.size())
       {
@@ -168,6 +166,13 @@ ChartError Chart::Init(std::string path)
       default:
          break;
       }
+   }
+
+   for(int total = 20; total>=4; total--)
+   {  
+      if(current_line >= splited.size())
+         return ChartError::FILE_INVALID;
+      
    }
 
    return ChartError::NO_ERROR;
