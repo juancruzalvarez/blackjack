@@ -2,16 +2,27 @@
 
 #include "game/game.h"
 #include "strategy/basic_strategy.h"
+#include "strategy/improved_basic_strategy.h"
+#include "strategy/chart.h"
 
 int main() {
-    srand(time(0)) ;
-   /*blackjack::Player* p = new blackjack::Player{5000,5000,new blackjack::BasicStrategy{}};
-   blackjack::Game game{blackjack::kStandardRules2Deck, {p}};
-   for (int i = 0; i<5; i++) {
+
+   blackjack::Chart chart;
+   chart.Init("test_chart.bjc");
+    /*srand(time(0)) ;
+   blackjack::Player* worse = new blackjack::Player{5000,5000,new blackjack::BasicStrategy{}};
+   blackjack::Player* bad = new blackjack::Player{5000,5000,new blackjack::ImprovedBasicStrategy{}};
+
+   blackjack::Game game{blackjack::kStandardRules2Deck, {bad, worse}};
+   for (int i = 0; i<5000; i++) {
       game.DoRound();
-      std::cout<<"player chips:"<<p->current_chips<<"\n";
-   }*/
-   /*std::cout<<"Hand test: \n";
+
+   }
+   std::cout<<"bad player chips:"<<bad->current_chips<<"\n";
+   std::cout<<"worse player chips:"<<worse->current_chips<<"\n";*/
+
+
+   /*std::cout<<"Hand test: \n"; 6343 - 6878
    int go_again =    1;
    while(go_again) {
       std::cout<<"Enter cards:(0 to end)\n";

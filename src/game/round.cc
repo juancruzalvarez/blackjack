@@ -18,7 +18,6 @@ BJRound::BJRound(int bet, bool bj3_2)
    pays_3_to_2 = bj3_2;
 }
 
-// TODO: if dealer has bj?
 int BJRound::decide_round(int dealer_count)
 {
    return pays_3_to_2 ? starting_bet * 1.5 : starting_bet * (6 / 5.0);
@@ -30,7 +29,6 @@ DoubleRound::DoubleRound(int bet, int player_count)
    this->player_count = player_count;
 }
 
-//TODO: if tie??
 int DoubleRound::decide_round(int dealer_count)
 {
    if (player_count == dealer_count) {

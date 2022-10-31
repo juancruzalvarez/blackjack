@@ -1,0 +1,39 @@
+#hard totals:
+S                             #stand on all 20
+S                             #stand on all 19
+S                             #stand on all 18
+S                             #stand on all 17
+S S S S S H H H H H           #stand against dealer 2-6 else hit 16
+S S S S S H H H H H           #stand against dealer 2-6 else hit 15
+S S S S S H H H H H           #stand against dealer 2-6 else hit 14
+S S S S S H H H H H           #stand against dealer 2-6 else hit 13
+H H S S S H H H H H           #stand against dealer 4-6 else hit 12
+DH DH DH DH DH DH DH DH DH DH #always double if allowed else hit
+DH DH DH DH DH DH DH DH H H   #double if not against ace or ten else hit
+H DH DH DH DH H H H H H       #double against dealer 3-6 else hit
+REST H                        # 8 and less always hits.
+#soft totals:
+S                             #stand on all 20
+S S S S DS S S S S S          #double or stand on dealer 6 else stand 19
+DS DS DS DS DS S S S S S      #double or stand on dealer 2 to 6 else stand 18
+H DH DH DH DH H H H H H       #double or hit on dealer 2 to 5 else hit 17
+H H DH DH DH DH H H H H H     #double or hit on dealer 3 to 6 else hit 16
+H H DH DH DH DH H H H H H     #double or hit on dealer 3 to 6 else hit 15
+H H H DH DH H H H H H         #double or hit on dealer 5 to 6 else hit 14
+H H H DH DH H H H H H         #double or hit on dealer 5 to 6 else hit 13
+#pairs:
+S                             #split all A-A
+D                             #never split tens
+S S S S S D S S D D           #split 9 agains dealer 2-6 or 8-9
+S                             #split all 8-8
+S S S S S S D D D D           #split sevens against dealer 2-7
+SD S S S S D D D D D          #split sixes agains dealer 2 only is das is allowed, split from 3-7
+D                             #never split fives
+D D D SD SD D D D D D         #split fours only if das is allowed against dealer 5-6
+SD SD S S S S D D D D         #split threes if das is allowed against dealer 2-3 else split against dealer 4-7
+SD SD S S S S D D D D         #split twos if das is allowed against dealer 2-3 else split against dealer 4-7
+#surrender:
+16 9 10 11  #16 hard surrenders to dealers 9-11
+15 10       #15 hard surrenders to dealer 10
+
+

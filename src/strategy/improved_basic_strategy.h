@@ -1,10 +1,11 @@
-#ifndef BASIC_STRATEGY_H
-#define BASIC_STRATEGY_H
+#ifndef IMPROVED_BASIC_STRATEGY_H
+#define IMPROVED_BASIC_STRATEGY_H
 
 #include "strategy.h"
 
 namespace blackjack {
-class BasicStrategy : public Strategy {
+
+class ImprovedBasicStrategy : public Strategy {
    
 public:
    int bet(int min, int max);

@@ -1,4 +1,5 @@
 #include <random>
+#include <iostream>
 
 #include "game.h"
 #include "card.h"
@@ -33,7 +34,6 @@ void Game::DoRound()
    for (int i = 0; i < players.size(); i++)
    {
       bets[i] = players[i]->strategy->bet(rules.min_bet, rules.max_bet);
-      players[i]->current_chips -= bets[i];
    }
    Card dealer_up = DrawCard();
    Card dealer_down = shoe.DrawCard(); // We dont use game DrawCard here becouse the players do not see this card until the end of the round.
