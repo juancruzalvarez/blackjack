@@ -142,6 +142,7 @@ ChartError Chart::Init(std::string path)
    //read hard and soft totals:
    while(current_line < splited.size() && hard_total >= 4 && soft_total >= 12){
       auto line_content = splited[current_line];
+      int total = hard_total >= 4 ? hard_total-- : soft_total--;
       switch (line_content.size())
       {
       case 1:
@@ -151,30 +152,24 @@ ChartError Chart::Init(std::string path)
          if(action == ChartAction::INVALID_ACTION)
             return ChartError::FILE_INVALID;
          for(int i = 2; i <= 11; i++)
-            hard_totals.insert({{total, i}, action});
+            (hard_total >= 4 ? hard_totals : soft_totals).insert({{total, i}, action});
          break;
-      case 2:
-         //if there is two tokens in the line,
-         // then the first one must be REST and the other an action.
-         auto action = get_action(line_content[0]);
-         if(action == ChartAction::INVALID_ACTION)
-            return ChartError::FILE_INVALID;
-         for(int i = 2; i <= 11; i++)
-            hard_totals.insert({{total, i}, action});
+      case 10:
+         //if there is ten tokens in the line,
+         //then there is an action for each of dealers up card.
+         for(int i = 2; i <= 11; i++){
+            auto action = get_action(line_content[i-2]);
+            if(action == ChartAction::INVALID_ACTION)
+               return ChartError::FILE_INVALID;
+            (hard_total >= 4 ? hard_totals : soft_totals).insert({{total, i}, action});
+            }
          break;
       
       default:
-         break;
+         return ChartError::FILE_INVALID;
       }
    }
-
-   for(int total = 20; total>=4; total--)
-   {  
-      if(current_line >= splited.size())
-         return ChartError::FILE_INVALID;
-      
-   }
-
+   
    return ChartError::NO_ERROR;
 }
 

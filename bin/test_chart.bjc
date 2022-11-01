@@ -11,7 +11,11 @@ H H S S S H H H H H           #stand against dealer 4-6 else hit 12
 DH DH DH DH DH DH DH DH DH DH #always double if allowed else hit
 DH DH DH DH DH DH DH DH H H   #double if not against ace or ten else hit
 H DH DH DH DH H H H H H       #double against dealer 3-6 else hit
-REST H                        # 8 and less always hits.
+H                             # 8 and less always hits.
+H
+H
+H
+H
 #soft totals:
 S                             #stand on all 20
 S S S S DS S S S S S          #double or stand on dealer 6 else stand 19
@@ -21,6 +25,7 @@ H H DH DH DH DH H H H H H     #double or hit on dealer 3 to 6 else hit 16
 H H DH DH DH DH H H H H H     #double or hit on dealer 3 to 6 else hit 15
 H H H DH DH H H H H H         #double or hit on dealer 5 to 6 else hit 14
 H H H DH DH H H H H H         #double or hit on dealer 5 to 6 else hit 13
+H H H H H H H H H H
 #pairs:
 S                             #split all A-A
 D                             #never split tens

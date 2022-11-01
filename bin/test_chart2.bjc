@@ -1,6 +1,32 @@
 #hard totals:
-H17+: S # stand hard 17 and above.
-H16-13: S S S S S H H H H H
-H12: H H S S S H H H H H
-H11: 0DH # always double on hard 11
-H10: 
+H17+: S                            # stand hard 17 and above.
+H16-13: S S S S S H H H H H        #
+H12: H H S S S H H H H H           #
+H11: DH                            # always double on hard 11.
+H10: DH DH DH DH DH DH DH DH H H   #
+H9: H DH DH DH DH H H H H H        # 
+H8-: H                             # hit 6 and less. 
+
+#soft totals:
+S20: S                             # stand on 20.
+S19: S S S S DS S S S S S          #
+S18: DS DS DS DS DS S S S S S      #
+S17: H DH DH DH DH H H H H H       #
+S16-15: H H DH DH DH DH H H H H H  #
+S13-14: H H H DH DH H H H H H      #
+
+#pairs:
+P22: S                             #split all A-A
+P20: D                             #never split tens
+P18: S S S S S D S S D D           #split 9 agains dealer 2-6 or 8-9
+P16: S                             #split all 8-8
+P14: S S S S S S D D D D           #split sevens against dealer 2-7
+P12: SD S S S S D D D D D          #split sixes agains dealer 2 only is das is allowed, split from 3-7
+P10: D                             #never split fives
+P8:  D D D SD SD D D D D D         #split fours only if das is allowed against dealer 5-6
+P6:  SD SD S S S S D D D D         #split threes if das is allowed against dealer 2-3 else split against dealer 4-7
+P4:  SD SD S S S S D D D D         #split twos if das is allowed against dealer 2-3 else split against dealer 4-7
+
+#surrenders:
+16: 9 10 11                        #sixteen surrenders against dealer 9-11
+15: 10                             #fifteen surrenders against dealer 10
