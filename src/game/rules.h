@@ -30,6 +30,19 @@ namespace blackjack {
       0.7,     // 70% of the shoe is seen before it gets shuffled again.
    };
 
+   const Rules kStandardRules6Deck {
+      6,       // Two decks.
+      false,   // Dealers stands on all 17s.
+      true,    // Player can surrender.
+      true,    // Player can double after splitting.
+      true,    // Blackjack pays 3:2.
+      true,    // Players are offered insurance on dealer up card ace.
+      false,   // Players cannot hit after splitting aces.
+      3,       // Player is allowed to split their hand a maximum of 3 times.
+      5, 100,  // Betting rangue [5 : 100]
+      0.7,     // 70% of the shoe is seen before it gets shuffled again.
+   };
+
 }
 
 #endif

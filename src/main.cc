@@ -4,23 +4,58 @@
 #include "strategy/basic_strategy.h"
 #include "strategy/improved_basic_strategy.h"
 #include "strategy/chart.h"
+#include "strategy/chart_strategy.h"
 
-int main() {
+std::string action_to_str(blackjack::ChartAction a)
+{
+   switch (a)
+   {
+   case blackjack::ChartAction::HIT:
+      return "HIT";
+   case blackjack::ChartAction::STAND:
+      return "STAND";
+   case blackjack::ChartAction::DOUBLE_OR_HIT:
+      return "DOUBLE/HIT";
+   case blackjack::ChartAction::DOUBLE_OR_STAND:
+      return "DOUBLE/STAND";
+   default:
+      return "INVALID";
+   }
+}
+
+std::string action_to_str(blackjack::PairChartAction a)
+{
+   switch (a)
+   {
+   case blackjack::PairChartAction::SPLIT:
+      return "SPLIT";
+   case blackjack::PairChartAction::DONT_SPLIT:
+      return "DONT SPLIT";
+   case blackjack::PairChartAction::SPLIT_IF_DAS:
+      return "SPLIT IF DAS";
+   default:
+      return "INVALID";
+   }
+}
+
+
+int main()
+{
 
    blackjack::Chart chart;
    chart.Init("test_chart.bjc");
-    /*srand(time(0)) ;
-   blackjack::Player* worse = new blackjack::Player{5000,5000,new blackjack::BasicStrategy{}};
+   blackjack::Player* basic_strategy_player = new blackjack::Player{5000,5000, new blackjack::ChartStrategy{chart}}; 
    blackjack::Player* bad = new blackjack::Player{5000,5000,new blackjack::ImprovedBasicStrategy{}};
 
-   blackjack::Game game{blackjack::kStandardRules2Deck, {bad, worse}};
-   for (int i = 0; i<5000; i++) {
-      game.DoRound();
+   srand(time(0)) ;
 
-   }
-   std::cout<<"bad player chips:"<<bad->current_chips<<"\n";
-   std::cout<<"worse player chips:"<<worse->current_chips<<"\n";*/
+  blackjack::Game game{blackjack::kStandardRules2Deck, {basic_strategy_player, bad}};
+  for (int i = 0; i<5000; i++) {
+     game.DoRound();
 
+  }
+  std::cout<<"basic_strategy player chips:"<<basic_strategy_player->current_chips<<"\n";
+  std::cout<<"bad player chips:"<<bad->current_chips<<"\n";
 
    /*std::cout<<"Hand test: \n"; 6343 - 6878
    int go_again =    1;
@@ -43,6 +78,6 @@ int main() {
       std::cout<<"Enter 1 to go again.\n";1
       std::cin>>go_again;
    }*/
-   
+
    return 0;
 }

@@ -8,7 +8,7 @@ int BasicStrategy::bet(int min, int max)
    return min;
 }
 
-PlayerAction BasicStrategy::play(Hand player_hand, Card dealer_card, bool can_split, bool can_double, bool can_surrender)
+PlayerAction BasicStrategy::play(Hand player_hand, Card dealer_card, PlayOptions options)
 {
    if (21 - player_hand.Value() <= 6)
       return PlayerAction::STAND;

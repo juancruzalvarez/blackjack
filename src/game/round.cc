@@ -31,10 +31,13 @@ DoubleRound::DoubleRound(int bet, int player_count)
 
 int DoubleRound::decide_round(int dealer_count)
 {
+   if(dealer_count>21)
+      return starting_bet;
+      
    if (player_count == dealer_count) {
       return 0;
    }
-   return starting_bet*2*(player_count>dealer_count ? 1 : -1);
+   return starting_bet*2*(player_count > dealer_count ? 1 : -1);
 }
 
   SplitRound::SplitRound(int bet, Round *a, Round *b){
@@ -65,10 +68,13 @@ ToBeDecidedRound::ToBeDecidedRound(int bet, int player_count)
 
 int ToBeDecidedRound::decide_round(int dealer_count)
 {
+   if(dealer_count>21)
+      return starting_bet;
+
    if (player_count == dealer_count) {
       return 0;
    }
-   return starting_bet*(player_count>dealer_count ? 1 : -1);
+   return starting_bet * ( player_count>dealer_count ? 1 : -1);
 }
 
 }

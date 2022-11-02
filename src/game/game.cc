@@ -130,19 +130,24 @@ void Game::DoRound()
 // If they stand the hand is decided against the dealer.
 Round *Game::DoPlayerRound(Player *player, Hand player_hand, int bet, Card dealer_up, bool can_split, bool can_double, bool can_surrender, int splits_done)
 {
-   if (player_hand.IsBlackJack())
-   {
-      return new BJRound{bet, rules.bj_3_to_2};
-   }
 
-   PlayerAction action = player->strategy->play(player_hand, dealer_up, true, true, true);
+   if (player_hand.IsBlackJack())
+      return new BJRound{bet, rules.bj_3_to_2};
+
+   PlayOptions options{
+      true, 
+      true,
+      true,
+      rules.can_DAS
+   };
+
+   PlayerAction action = player->strategy->play(player_hand, dealer_up, options);
    
    switch (action)
    {
    case PlayerAction::SURRENDER:
-   {
       return new SurrenderRound{bet};
-   }
+
    case PlayerAction::DOUBLE:
    {
       player_hand.AddCard(DrawCard());
@@ -157,7 +162,7 @@ Round *Game::DoPlayerRound(Player *player, Hand player_hand, int bet, Card deale
                                         splited_hand.first,
                                         bet,
                                         dealer_up,
-                                        splits_done < rules.max_splits,
+                                        splits_done + 1 < rules.max_splits,
                                         rules.can_DAS,
                                         false,
                                         splits_done + 1);
@@ -165,16 +170,16 @@ Round *Game::DoPlayerRound(Player *player, Hand player_hand, int bet, Card deale
                                          splited_hand.second,
                                          bet,
                                          dealer_up,
-                                         splits_done < rules.max_splits,
+                                         splits_done + 1 < rules.max_splits,
                                          rules.can_DAS,
                                          false,
                                          splits_done + 1);
       return new SplitRound{bet, first_round, second_round};
    }
+   
    case PlayerAction::STAND:
-   {
       return new ToBeDecidedRound{bet, player_hand.Value()};
-   }
+
    case PlayerAction::HIT:
    {
       do
@@ -185,7 +190,7 @@ Round *Game::DoPlayerRound(Player *player, Hand player_hand, int bet, Card deale
             return new BustRound{bet};
          }
          // After hitting the player cant split, double or surrender.
-         action = player->strategy->play(player_hand, dealer_up, false, false, false);
+         action = player->strategy->play(player_hand, dealer_up, {false, false, false, rules.can_DAS});
       } while (action == PlayerAction::HIT);
 
       return new ToBeDecidedRound{bet, player_hand.Value()};

@@ -8,12 +8,12 @@ int ImprovedBasicStrategy::bet(int min, int max)
    return min;
 }
 
-PlayerAction ImprovedBasicStrategy::play(Hand player_hand, Card dealer_card, bool can_split, bool can_double, bool can_surrender)
+PlayerAction ImprovedBasicStrategy::play(Hand player_hand, Card dealer_card, PlayOptions options)
 {
-   if(can_split && player_hand.CanSplit() && (player_hand.Value() == 16 || player_hand.Value() == 12))
+   if(options.can_split && player_hand.CanSplit() && (player_hand.Value() == 16 || player_hand.Value() == 12))
       return PlayerAction::SPLIT;
    
-   if(can_double && (player_hand.Value() == 11 ||player_hand.Value() == 10))
+   if(options.can_double && (player_hand.Value() == 11 ||player_hand.Value() == 10))
       return PlayerAction::DOUBLE;
    if (21 - player_hand.Value() <= 6)
       return PlayerAction::STAND;

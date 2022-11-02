@@ -21,8 +21,8 @@ S                             #stand on all 20
 S S S S DS S S S S S          #double or stand on dealer 6 else stand 19
 DS DS DS DS DS S S S S S      #double or stand on dealer 2 to 6 else stand 18
 H DH DH DH DH H H H H H       #double or hit on dealer 2 to 5 else hit 17
-H H DH DH DH DH H H H H H     #double or hit on dealer 3 to 6 else hit 16
-H H DH DH DH DH H H H H H     #double or hit on dealer 3 to 6 else hit 15
+H H DH DH DH DH H H H H      #double or hit on dealer 3 to 6 else hit 16
+H H DH DH DH DH H H H H      #double or hit on dealer 3 to 6 else hit 15
 H H H DH DH H H H H H         #double or hit on dealer 5 to 6 else hit 14
 H H H DH DH H H H H H         #double or hit on dealer 5 to 6 else hit 13
 H H H H H H H H H H

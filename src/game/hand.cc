@@ -25,6 +25,14 @@ void Hand::AddCard(Card card)
    cards.push_back(card);
 }
 
+int Hand::RawValue()
+{
+   int value = 0;
+   for (const auto &card : cards)
+      value += card;
+   return value;
+}
+
 int Hand::Value()
 {
    int value = 0;
