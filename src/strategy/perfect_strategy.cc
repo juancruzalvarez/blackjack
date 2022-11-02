@@ -1,11 +1,39 @@
 #include "perfect_strategy.h"
 
+#include <array>
+
 namespace blackjack
 {
 
-PerfectStrategy::PerfectStrategy(int decks)
-{
+namespace {
 
+
+}
+
+
+//time complexity O(n) = 10^n where n is the ammount of cards drawed before hitting at least 16 or busting.
+void calculate_dealer_probabilities(Hand dealer_hand, double current_prob, double results[5], std::array<int, 10> cards_left)
+{
+    if(dealer_hand.Value()>16)
+        results[std::min(dealer_hand.Value()-17, 5)] += current_prob;
+   for(int c = 2; c<11; c++){
+      cards_left[c]--;
+      
+      cards_left[c]++;
+   }
+
+}
+
+double PerfectStrategy::get_doubling_expected_value(Hand player_hand, std::vector<double> dealer_probabilities);
+double PerfectStrategy::get_standing_expected_value(Hand player_hand, std::vector<double> dealer_probabilities);
+double PerfectStrategy::get_hitting_expected_value(Hand player_hand, std::vector<double> dealer_probabilities);
+double PerfectStrategy::get_card_probability(Card c)
+{
+    double cards_left = 0;
+    for(int i = 0; i<10; i++)
+        cards_left+=cards_remaining[i];
+    return cards_remaining[c]/cards_left;
+}
 }
 
 int PerfectStrategy::bet(int min, int max)
@@ -36,24 +64,6 @@ void PerfectStrategy::see_cards(std::vector<Card> cards) {}
 void PerfectStrategy::on_shuffle() {}
 
 
-//time complexity O(n) = 10^n where n is the ammount of cards drawed before hitting at least 16 or busting.
-std::vector<double> PerfectStrategy::get_dealer_probabilities(Hand dealer_hand, double current_prob)
-{
-    std::vector<double> probabilities = {0,0,0,0,0,0};//17,18,19,20,21,bust
-    if(dealer_hand.Value()>16)
-        probabilities[std::min(dealer_hand.Value()-17, 5)] += current_prob;
 
-}
-
-double PerfectStrategy::get_doubling_expected_value(Hand player_hand, std::vector<double> dealer_probabilities);
-double PerfectStrategy::get_standing_expected_value(Hand player_hand, std::vector<double> dealer_probabilities);
-double PerfectStrategy::get_hitting_expected_value(Hand player_hand, std::vector<double> dealer_probabilities);
-double PerfectStrategy::get_card_probability(Card c)
-{
-    double cards_left = 0;
-    for(int i = 0; i<10; i++)
-        cards_left+=cards_remaining[i];
-    return cards_remaining[c]/cards_left;
-}
 
 }
