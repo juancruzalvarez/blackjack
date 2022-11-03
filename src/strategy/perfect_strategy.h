@@ -1,6 +1,8 @@
 #ifndef PERFECT_STRATEGY
 #define PERFECT_STRATEGY
 
+#include <array>
+
 #include "strategy.h"
 
 namespace blackjack {
@@ -13,14 +15,9 @@ public:
     bool wants_insurance();
     void see_card(Card card);
     void see_cards(std::vector<Card> cards);
-    void on_shuffle();
+    void on_shuffle(int decks);
 private:
-    int cards_remaining[10];
-    std::vector<double> get_dealer_probabilities(Card dealer_card); 
-    double get_doubling_expected_value(Hand player_hand, std::vector<double> dealer_probabilities);
-    double get_standing_expected_value(Hand player_hand, std::vector<double> dealer_probabilities);
-    double get_hitting_expected_value(Hand player_hand, std::vector<double> dealer_probabilities);
-    double get_card_probability(Card c);
+    std::array<int, 10> cards_left;
 };
 
 }

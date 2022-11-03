@@ -16,7 +16,7 @@ void skip_whitespace(const std::string &str, int &i)
       i++;
 }
 
-// splits a string by whitespaces
+// Splits a string by whitespaces
 std::vector<std::string> split_by_whitespace(const std::string &str)
 {
    std::vector<std::string> out;
@@ -70,7 +70,7 @@ void remove_comments(std::string &file_content)
    }
 }
 
-// returns true if the file was readed succesfully.
+// Returns true if the file was readed succesfully.
 bool read_file_to_str(const std::string &path, std::string &file_content)
 {
    std::ifstream file_stream;

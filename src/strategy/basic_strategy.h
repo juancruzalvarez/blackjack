@@ -12,7 +12,7 @@ public:
    bool wants_insurance();
    void see_card(Card card);
    void see_cards(std::vector<Card> cards);
-   void on_shuffle();
+   void on_shuffle(int decks);
 };
 
 }

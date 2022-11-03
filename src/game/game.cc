@@ -99,7 +99,19 @@ void Game::DoRound()
    // Play all the players rounds
    for (int i = 0; i < players.size(); i++)
    {
-      rounds[i] = DoPlayerRound(players[i], hands[i], bets[i], dealer_up, true, true, true, 0);
+      rounds[i] = DoPlayerRound(
+         players[i],
+         hands[i],
+         bets[i],
+         dealer_up,
+         {
+            true, 
+            true,
+            rules.can_surrender,
+            rules.can_DAS,
+            rules.max_splits,
+            0,
+         });
    }
 
    // Play the dealers round.
@@ -116,6 +128,8 @@ void Game::DoRound()
 
    if ( shoe.GetShoePenetration() > rules.penetration_before_shuffle) {
       shoe.Shuffle();
+      for(const auto& p : players)
+         p->strategy->on_shuffle(rules.decks);
    }
 }
 
@@ -128,18 +142,11 @@ void Game::DoRound()
 // else the player hits until they bust(go over 21) or they stand.
 // If they bust, the hand is lost automatically
 // If they stand the hand is decided against the dealer.
-Round *Game::DoPlayerRound(Player *player, Hand player_hand, int bet, Card dealer_up, bool can_split, bool can_double, bool can_surrender, int splits_done)
+Round *Game::DoPlayerRound(Player *player, Hand player_hand, int bet, Card dealer_up, PlayOptions options)
 {
 
    if (player_hand.IsBlackJack())
       return new BJRound{bet, rules.bj_3_to_2};
-
-   PlayOptions options{
-      true, 
-      true,
-      true,
-      rules.can_DAS
-   };
 
    PlayerAction action = player->strategy->play(player_hand, dealer_up, options);
    
@@ -158,22 +165,23 @@ Round *Game::DoPlayerRound(Player *player, Hand player_hand, int bet, Card deale
       std::pair<Hand, Hand> splited_hand = player_hand.Split();
       splited_hand.first.AddCard(DrawCard());
       splited_hand.second.AddCard(DrawCard());
+      options.current_splits++;
+      options.can_double = options.can_DAS;
+      options.can_surrender = false;
+      options.can_split = options.current_splits < options.max_splits;
+
       Round *first_round = DoPlayerRound(player,
                                         splited_hand.first,
                                         bet,
                                         dealer_up,
-                                        splits_done + 1 < rules.max_splits,
-                                        rules.can_DAS,
-                                        false,
-                                        splits_done + 1);
+                                        options);
+
       Round *second_round = DoPlayerRound(player,
                                          splited_hand.second,
                                          bet,
                                          dealer_up,
-                                         splits_done + 1 < rules.max_splits,
-                                         rules.can_DAS,
-                                         false,
-                                         splits_done + 1);
+                                         options);
+
       return new SplitRound{bet, first_round, second_round};
    }
    
@@ -190,7 +198,7 @@ Round *Game::DoPlayerRound(Player *player, Hand player_hand, int bet, Card deale
             return new BustRound{bet};
          }
          // After hitting the player cant split, double or surrender.
-         action = player->strategy->play(player_hand, dealer_up, {false, false, false, rules.can_DAS});
+         action = player->strategy->play(player_hand, dealer_up, {false, false, false, rules.can_DAS, options.max_splits, options.current_splits});
       } while (action == PlayerAction::HIT);
 
       return new ToBeDecidedRound{bet, player_hand.Value()};

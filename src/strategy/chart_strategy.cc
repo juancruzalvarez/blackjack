@@ -72,7 +72,7 @@ namespace blackjack
 
     }
 
-    void ChartStrategy::on_shuffle()
+    void ChartStrategy::on_shuffle(int decks)
     {
         
     }

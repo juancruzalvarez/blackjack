@@ -11,6 +11,7 @@ struct PlayOptions {
    bool can_double;
    bool can_surrender;
    bool can_DAS;
+   int max_splits, current_splits;
 };
 
 class Strategy
@@ -21,7 +22,7 @@ public:
    virtual bool wants_insurance() = 0;
    virtual void see_card(Card card) = 0;
    virtual void see_cards(std::vector<Card> cards) = 0;
-   virtual void on_shuffle() = 0;
+   virtual void on_shuffle(int decks) = 0;
 };
 
 

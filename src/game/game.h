@@ -23,7 +23,7 @@ namespace blackjack
       void DoRound();
 
    private:
-      Round *DoPlayerRound(Player *player, Hand player_hand, int bet, Card dealer_up, bool can_split, bool can_double, bool can_surrender, int splits_done);
+      Round *DoPlayerRound(Player *player, Hand player_hand, int bet, Card dealer_up, PlayOptions options);
       int DoDealerRound(Hand dealer_hand);
       Card DrawCard();
       std::vector<Player *> players;

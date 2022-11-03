@@ -3,6 +3,7 @@
 #include "game/game.h"
 #include "strategy/basic_strategy.h"
 #include "strategy/improved_basic_strategy.h"
+#include "strategy/perfect_strategy.h"
 #include "strategy/chart.h"
 #include "strategy/chart_strategy.h"
 
@@ -44,16 +45,18 @@ int main()
 
    blackjack::Chart chart;
    chart.Init("test_chart.bjc");
-   blackjack::Player* basic_strategy_player = new blackjack::Player{5000,5000, new blackjack::ChartStrategy{chart}}; 
-   blackjack::Player* bad = new blackjack::Player{5000,5000,new blackjack::ImprovedBasicStrategy{}};
+   blackjack::Player* perfect_strategy_player = new blackjack::Player{10000,10000, new blackjack::PerfectStrategy{blackjack::kStandardRules2Deck.decks}};
+   blackjack::Player* basic_strategy_player = new blackjack::Player{10000,10000, new blackjack::ChartStrategy{chart}}; 
+   blackjack::Player* bad = new blackjack::Player{10000,10000,new blackjack::ImprovedBasicStrategy{}};
 
    srand(time(0)) ;
 
-  blackjack::Game game{blackjack::kStandardRules2Deck, {basic_strategy_player, bad}};
-  for (int i = 0; i<5000; i++) {
+  blackjack::Game game{blackjack::kStandardRules2Deck, {perfect_strategy_player, basic_strategy_player, bad}};
+  for (int i = 0; i<15000; i++) {
      game.DoRound();
 
   }
+   std::cout<<"perfect_strategy player chips:"<<perfect_strategy_player->current_chips<<"\n";
   std::cout<<"basic_strategy player chips:"<<basic_strategy_player->current_chips<<"\n";
   std::cout<<"bad player chips:"<<bad->current_chips<<"\n";
 

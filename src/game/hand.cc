@@ -94,4 +94,8 @@ bool Hand::IsSoft()
    return ace_count>0;
 }
 
+void Hand::RemoveLastCard() {
+   cards.pop_back();
+}
+
 }

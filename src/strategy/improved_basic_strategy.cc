@@ -28,6 +28,6 @@ bool ImprovedBasicStrategy::wants_insurance()
 
 void ImprovedBasicStrategy::see_card(Card card) {}
 void ImprovedBasicStrategy::see_cards(std::vector<Card> cards) {}
-void ImprovedBasicStrategy::on_shuffle() {}
+void ImprovedBasicStrategy::on_shuffle(int decks) {}
 
 }

@@ -23,6 +23,6 @@ bool BasicStrategy::wants_insurance()
 
 void BasicStrategy::see_card(Card card) {}
 void BasicStrategy::see_cards(std::vector<Card> cards) {}
-void BasicStrategy::on_shuffle() {}
+void BasicStrategy::on_shuffle(int decks) {}
 
 }
