@@ -5,7 +5,7 @@
 
 #include "strategy.h"
 
-namespace blackjack {
+namespace bj {
 
 class PerfectStrategy : public Strategy {
 public:

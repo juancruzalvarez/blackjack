@@ -4,7 +4,7 @@
 #include "strategy.h"
 #include "chart.h"
 
-namespace blackjack {
+namespace bj {
 
 class ChartStrategy : public Strategy {
 

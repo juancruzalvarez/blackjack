@@ -1,7 +1,7 @@
 #include "shoe.h"
 
 #include <iostream>
-namespace blackjack {
+namespace bj {
 
 Shoe::Shoe()
 {

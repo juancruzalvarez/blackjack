@@ -3,7 +3,7 @@
 #include <array>
 #include <iostream>
 
-namespace blackjack
+namespace bj
 {
 
 namespace {
@@ -18,7 +18,7 @@ std::pair<PlayerAction, double> get_max_value_action(std::vector<std::pair<Playe
 }
 
 // Returns the probability when drawing a card from the shoe with @cards_lefts cards in it, of it being @c.
-double get_card_probability(blackjack::Card c, std::array<int, 10> cards_left)
+double get_card_probability(bj::Card c, std::array<int, 10> cards_left)
 {
    if(cards_left[c - 2] <= 0)
       return 0;
@@ -37,7 +37,7 @@ double get_card_probability(blackjack::Card c, std::array<int, 10> cards_left)
 // @results = {0.0,0.0,0.0,0.0,0.0,0.0}
 // O(n) = 10^n where n is the ammount of cards drawed before hitting at least 16 or busting.
 void calculate_dealer_probabilities(
-   blackjack::Hand dealer_hand,
+   bj::Hand dealer_hand,
    double current_prob,
    std::array<double, 6> &results,
    std::array<int, 10> cards_left)
@@ -65,7 +65,7 @@ void calculate_dealer_probabilities(
 }
 
 // Returns the expected value of standing with the @player_hand.
-double standing_expected_value(blackjack::Hand player_hand, std::array<double, 6> dealer_probabilities)
+double standing_expected_value(bj::Hand player_hand, std::array<double, 6> dealer_probabilities)
 {
    // EV -> expected value, 
    // P(w) -> prob of player winning, P(l) -> prob of player lossing,
@@ -105,7 +105,7 @@ double standing_expected_value(blackjack::Hand player_hand, std::array<double, 6
 
 // Returns the expected value if the players doubles with @player_hand.
 double doubling_expected_value(
-   blackjack::Hand player_hand,
+   bj::Hand player_hand,
    std::array<double, 6> dealer_probabilities,
    std::array<int, 10> cards_left)
 {
@@ -123,7 +123,7 @@ double doubling_expected_value(
 
 // Returns the expected value if the players hits with @player_hand.
 double hitting_expected_value(
-   blackjack::Hand player_hand,
+   bj::Hand player_hand,
    std::array<double, 6> dealer_probabilities,
    std::array<int, 10> cards_left)
 {
@@ -149,14 +149,14 @@ double hitting_expected_value(
 }
 
 
-std::vector<std::pair<PlayerAction, double>> get_actions_ev(blackjack::Hand,std::array<double, 6>,std::array<int, 10>,blackjack::PlayOptions);
+std::vector<std::pair<PlayerAction, double>> get_actions_ev(bj::Hand,std::array<double, 6>,std::array<int, 10>,bj::PlayOptions);
 
 // Returns the expected value if the players splits with @player_hand.
 double splitting_expected_value(
-   blackjack::Hand player_hand,
+   bj::Hand player_hand,
    std::array<double, 6> dealer_probabilities,
    std::array<int, 10> cards_left,
-   blackjack::PlayOptions options)
+   bj::PlayOptions options)
 {
    double value = 0.0;
    auto hands = player_hand.Split();
@@ -191,10 +191,10 @@ double splitting_expected_value(
 
 // Returns a vector of pairs of all the posible actions with their respective expected values.
 std::vector<std::pair<PlayerAction, double>> get_actions_ev(
-   blackjack::Hand player_hand,
+   bj::Hand player_hand,
    std::array<double, 6> dealer_probabilities,
    std::array<int, 10> cards_left,
-   blackjack::PlayOptions options)
+   bj::PlayOptions options)
 {
    std::vector<std::pair<PlayerAction, double>> res;
 

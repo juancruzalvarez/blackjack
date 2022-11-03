@@ -3,7 +3,7 @@
 
 #include "../strategy/strategy.h"
 
-namespace blackjack {
+namespace bj {
 
 struct Player
 {

@@ -1,7 +1,7 @@
 #ifndef CARD_H
 #define CARD_H
 
-namespace blackjack {
+namespace bj {
    
 // In blackjack, the suit of the card is irelevant
 // 11 represents ace, 10 represents all face cards(J, Q, K) and 10s, and the rest are represented by their number.

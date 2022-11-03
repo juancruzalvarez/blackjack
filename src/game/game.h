@@ -9,7 +9,7 @@
 #include "player.h"
 #include "player_action.h"
 
-namespace blackjack
+namespace bj
 {
 
    const int kMaxPlayersPerTable = 7;
@@ -23,7 +23,7 @@ namespace blackjack
       void DoRound();
 
    private:
-      Round *DoPlayerRound(Player *player, Hand player_hand, int bet, Card dealer_up, PlayOptions options);
+      Round *DoPlayerRound(Player *player, Hand player_hand, Card dealer_up, PlayOptions options);
       int DoDealerRound(Hand dealer_hand);
       Card DrawCard();
       std::vector<Player *> players;

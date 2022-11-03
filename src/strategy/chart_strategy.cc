@@ -1,6 +1,6 @@
 #include "chart_strategy.h"
 
-namespace blackjack
+namespace bj
 {
 
     ChartStrategy::ChartStrategy(Chart chart)

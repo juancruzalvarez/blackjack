@@ -6,7 +6,7 @@
 #include "round.h"
 #include "hand.h"
 
-namespace blackjack {
+namespace bj {
 
 
 Game::Game(Rules rules, std::vector<Player *> players)
@@ -77,12 +77,9 @@ void Game::DoRound()
          // If dealer has blackjack, take all the bets of the players that dont have blackjack.
          for (int i = 0; i < players.size(); i++)
          {
-            if (hands[i].IsBlackJack())
+            if (!hands[i].IsBlackJack())
             {
-               players[i]->current_chips += bets[i];
-            }
-            else
-            {
+               players[i]->current_chips -= bets[i];
                house_profit += bets[i];
             }
          }
@@ -102,15 +99,14 @@ void Game::DoRound()
       rounds[i] = DoPlayerRound(
          players[i],
          hands[i],
-         bets[i],
          dealer_up,
-         {
-            true, 
-            true,
-            rules.can_surrender,
-            rules.can_DAS,
-            rules.max_splits,
-            0,
+         PlayOptions{
+            true,                //can_split
+            true,                //can_double
+            rules.can_surrender, //can_surrender
+            rules.can_DAS,       //can_DAS
+            rules.max_splits,    //max_splits
+            0,                   //current_splits
          });
    }
 
@@ -120,7 +116,7 @@ void Game::DoRound()
    // Dealer collects or pays depending on the round result.
    for (int i = 0; i < players.size(); i++)
    {
-      int round_result = rounds[i]->decide_round(dealer_value);
+      int round_result = bets[i] * rounds[i]->decide_round(dealer_value);
       // decide_round returns the value of the round for the player.
       house_profit -= round_result;
       players[i]->current_chips += round_result;
@@ -142,23 +138,23 @@ void Game::DoRound()
 // else the player hits until they bust(go over 21) or they stand.
 // If they bust, the hand is lost automatically
 // If they stand the hand is decided against the dealer.
-Round *Game::DoPlayerRound(Player *player, Hand player_hand, int bet, Card dealer_up, PlayOptions options)
+Round *Game::DoPlayerRound(Player *player, Hand player_hand, Card dealer_up, PlayOptions options)
 {
 
    if (player_hand.IsBlackJack())
-      return new BJRound{bet, rules.bj_3_to_2};
+      return new BJRound{rules.bj_3_to_2};
 
    PlayerAction action = player->strategy->play(player_hand, dealer_up, options);
    
    switch (action)
    {
    case PlayerAction::SURRENDER:
-      return new SurrenderRound{bet};
+      return new SurrenderRound{};
 
    case PlayerAction::DOUBLE:
    {
       player_hand.AddCard(DrawCard());
-      return new DoubleRound{bet, player_hand.Value()};
+      return new DoubleRound{player_hand.Value()};
    }
    case PlayerAction::SPLIT:
    {
@@ -172,21 +168,19 @@ Round *Game::DoPlayerRound(Player *player, Hand player_hand, int bet, Card deale
 
       Round *first_round = DoPlayerRound(player,
                                         splited_hand.first,
-                                        bet,
                                         dealer_up,
                                         options);
 
       Round *second_round = DoPlayerRound(player,
                                          splited_hand.second,
-                                         bet,
                                          dealer_up,
                                          options);
 
-      return new SplitRound{bet, first_round, second_round};
+      return new SplitRound{first_round, second_round};
    }
    
    case PlayerAction::STAND:
-      return new ToBeDecidedRound{bet, player_hand.Value()};
+      return new ToBeDecidedRound{player_hand.Value()};
 
    case PlayerAction::HIT:
    {
@@ -195,13 +189,13 @@ Round *Game::DoPlayerRound(Player *player, Hand player_hand, int bet, Card deale
          player_hand.AddCard(DrawCard());
          if (player_hand.Bust())
          {
-            return new BustRound{bet};
+            return new BustRound{};
          }
          // After hitting the player cant split, double or surrender.
          action = player->strategy->play(player_hand, dealer_up, {false, false, false, rules.can_DAS, options.max_splits, options.current_splits});
       } while (action == PlayerAction::HIT);
 
-      return new ToBeDecidedRound{bet, player_hand.Value()};
+      return new ToBeDecidedRound{player_hand.Value()};
    }
    }
 }
@@ -218,7 +212,7 @@ int Game::DoDealerRound(Hand dealer_hand)
    return dealer_hand.Value();
 }
 
-// draws a card from the shoe and shows it to all players.
+// Draws a card from the shoe and shows it to all players.
 Card Game::DrawCard()
 {
    Card c = shoe.DrawCard();

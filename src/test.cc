@@ -4,7 +4,7 @@
 #include "game/card.h"
 #include "game/hand.h"
 
-double get_card_probability(blackjack::Card c, std::array<int, 10> cards_left)
+double get_card_probability(bj::Card c, std::array<int, 10> cards_left)
 {
     double total_cards_left = 0;
     for (const auto &c : cards_left)
@@ -13,7 +13,7 @@ double get_card_probability(blackjack::Card c, std::array<int, 10> cards_left)
 }
 
 // time complexity O(n) = 10^n where n is the ammount of cards drawed before hitting at least 16 or busting.
-void calculate_dealer_probabilities(blackjack::Hand dealer_hand, double current_prob,
+void calculate_dealer_probabilities(bj::Hand dealer_hand, double current_prob,
                                     std::array<double, 5> &results, std::array<int, 10> cards_left)
 {
     if (dealer_hand.Value() > 16)
@@ -37,7 +37,7 @@ void calculate_dealer_probabilities(blackjack::Hand dealer_hand, double current_
     }
 }
 
-double standing_expected_value(blackjack::Hand player_hand, std::array<double, 5> dealer_probabilities)
+double standing_expected_value(bj::Hand player_hand, std::array<double, 5> dealer_probabilities)
 {
     double value;
     int player_value = player_hand.Value();
@@ -51,7 +51,7 @@ double standing_expected_value(blackjack::Hand player_hand, std::array<double, 5
     return prob_of_winning - prob_of_lossing;
 }
 
-double doubling_expected_value(blackjack::Hand player_hand, std::array<double, 5> dealer_probabilities, std::array<int, 10> cards_left)
+double doubling_expected_value(bj::Hand player_hand, std::array<double, 5> dealer_probabilities, std::array<int, 10> cards_left)
 {
     double value = 0;
     double n = 0;
@@ -68,7 +68,7 @@ double doubling_expected_value(blackjack::Hand player_hand, std::array<double, 5
     return value / n;
 }
 
-double hitting_expected_value(blackjack::Hand player_hand, std::array<double, 5> dealer_probabilities, std::array<int, 10> cards_left)
+double hitting_expected_value(bj::Hand player_hand, std::array<double, 5> dealer_probabilities, std::array<int, 10> cards_left)
 {
     double value = 0.0;
     double n = 0;
@@ -99,7 +99,7 @@ double hitting_expected_value(blackjack::Hand player_hand, std::array<double, 5>
 int main()
 {
     std::array<int, 10> cards_left = {4, 4, 4, 4, 4, 4, 4, 3, 20, 4};
-    blackjack::Hand dealer_hand = blackjack::Hand{9};
+    bj::Hand dealer_hand = bj::Hand{9};
     double dealer_probabilities[6] = {0, 0, 0, 0, 0, 0};
     calculate_dealer_probabilities(dealer_hand, 1, dealer_probabilities, cards_left);
     std::cout << "Probabilities: \n";

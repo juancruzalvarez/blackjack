@@ -4,7 +4,7 @@
 #include "../game/player_action.h"
 #include "../game/hand.h"
 
-namespace blackjack { 
+namespace bj { 
    
 struct PlayOptions {
    bool can_split;

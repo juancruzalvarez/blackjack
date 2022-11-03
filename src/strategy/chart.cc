@@ -83,51 +83,33 @@ bool read_file_to_str(const std::string &path, std::string &file_content)
    return true;
 }
 
-blackjack::ChartAction get_action(const std::string &act)
+bj::ChartAction get_action(const std::string &act)
 {
    if (act == "DH")
-   {
-      return blackjack::ChartAction::DOUBLE_OR_HIT;
-   }
+      return bj::ChartAction::DOUBLE_OR_HIT;
    else if (act == "DS")
-   {
-      return blackjack::ChartAction::DOUBLE_OR_STAND;
-   }
+      return bj::ChartAction::DOUBLE_OR_STAND;
    else if (act == "H")
-   {
-      return blackjack::ChartAction::HIT;
-   }
+      return bj::ChartAction::HIT;
    else if (act == "S")
-   {
-      return blackjack::ChartAction::STAND;
-   }
+      return bj::ChartAction::STAND;
    else
-   {
-      return blackjack::ChartAction::INVALID_ACTION;
-   }
+      return bj::ChartAction::INVALID_ACTION;
 }
 
-blackjack::PairChartAction get_pair_action(const std::string &act)
+bj::PairChartAction get_pair_action(const std::string &act)
 {
    if (act == "S")
-   {
-      return blackjack::PairChartAction::SPLIT;
-   }
+      return bj::PairChartAction::SPLIT;
    else if (act == "D")
-   {
-      return blackjack::PairChartAction::DONT_SPLIT;
-   }
+      return bj::PairChartAction::DONT_SPLIT;
    else if (act == "SD")
-   {
-      return blackjack::PairChartAction::SPLIT_IF_DAS;
-   }
+      return bj::PairChartAction::SPLIT_IF_DAS;
    else
-   {
-      return blackjack::PairChartAction::INVALID_ACTION;
-   }
+      return bj::PairChartAction::INVALID_ACTION;
 }
 
-namespace blackjack
+namespace bj
 {
 
    Chart::Chart() {}

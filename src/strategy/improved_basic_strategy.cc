@@ -1,6 +1,6 @@
 #include "improved_basic_strategy.h"
 
-namespace blackjack
+namespace bj
 {
 
 int ImprovedBasicStrategy::bet(int min, int max)

@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 
-namespace blackjack {
+namespace bj {
 
    enum class ChartError {
       NO_ERROR,

@@ -7,32 +7,32 @@
 #include "strategy/chart.h"
 #include "strategy/chart_strategy.h"
 
-std::string action_to_str(blackjack::ChartAction a)
+std::string action_to_str(bj::ChartAction a)
 {
    switch (a)
    {
-   case blackjack::ChartAction::HIT:
+   case bj::ChartAction::HIT:
       return "HIT";
-   case blackjack::ChartAction::STAND:
+   case bj::ChartAction::STAND:
       return "STAND";
-   case blackjack::ChartAction::DOUBLE_OR_HIT:
+   case bj::ChartAction::DOUBLE_OR_HIT:
       return "DOUBLE/HIT";
-   case blackjack::ChartAction::DOUBLE_OR_STAND:
+   case bj::ChartAction::DOUBLE_OR_STAND:
       return "DOUBLE/STAND";
    default:
       return "INVALID";
    }
 }
 
-std::string action_to_str(blackjack::PairChartAction a)
+std::string action_to_str(bj::PairChartAction a)
 {
    switch (a)
    {
-   case blackjack::PairChartAction::SPLIT:
+   case bj::PairChartAction::SPLIT:
       return "SPLIT";
-   case blackjack::PairChartAction::DONT_SPLIT:
+   case bj::PairChartAction::DONT_SPLIT:
       return "DONT SPLIT";
-   case blackjack::PairChartAction::SPLIT_IF_DAS:
+   case bj::PairChartAction::SPLIT_IF_DAS:
       return "SPLIT IF DAS";
    default:
       return "INVALID";
@@ -43,15 +43,15 @@ std::string action_to_str(blackjack::PairChartAction a)
 int main()
 {
 
-   blackjack::Chart chart;
+   bj::Chart chart;
    chart.Init("test_chart.bjc");
-   blackjack::Player* perfect_strategy_player = new blackjack::Player{10000,10000, new blackjack::PerfectStrategy{blackjack::kStandardRules2Deck.decks}};
-   blackjack::Player* basic_strategy_player = new blackjack::Player{10000,10000, new blackjack::ChartStrategy{chart}}; 
-   blackjack::Player* bad = new blackjack::Player{10000,10000,new blackjack::ImprovedBasicStrategy{}};
+   bj::Player* perfect_strategy_player = new bj::Player{10000,10000, new bj::PerfectStrategy{bj::kStandardRules2Deck.decks}};
+   bj::Player* basic_strategy_player = new bj::Player{10000,10000, new bj::ChartStrategy{chart}}; 
+   bj::Player* bad = new bj::Player{10000,10000,new bj::ImprovedBasicStrategy{}};
 
    srand(time(0)) ;
 
-  blackjack::Game game{blackjack::kStandardRules2Deck, {perfect_strategy_player, basic_strategy_player, bad}};
+  bj::Game game{bj::kStandardRules2Deck, {perfect_strategy_player, basic_strategy_player, bad}};
   for (int i = 0; i<15000; i++) {
      game.DoRound();
 
@@ -64,8 +64,8 @@ int main()
    int go_again =    1;
    while(go_again) {
       std::cout<<"Enter cards:(0 to end)\n";
-      blackjack::Card card = 1;
-      blackjack::Hand hand{};
+      bj::Card card = 1;
+      bj::Hand hand{};
       for(;;){
          std::cin>>card;
          if (card == 0)
@@ -75,7 +75,7 @@ int main()
       std::cout<<"Hand:\n";
       std::cout<<"Value:"<<hand.Value()<<"\n";
       std::cout<<"Bust:"<<hand.Bust()<<"\n";
-      std::cout<<"Bj:"<<hand.IsBlackJack()<<"\n";
+      std::cout<<"Bj:"<<hand.Isbj()<<"\n";
       std::cout<<"CanSplit:"<<hand.CanSplit()<<"\n";
       std::cout<<"IsSoft:"<<hand.IsSoft()<<"\n";
       std::cout<<"Enter 1 to go again.\n";1

@@ -5,7 +5,7 @@
 
 #include "card.h"
 
-namespace blackjack {
+namespace bj {
 
 // Hand represents a set of cards.
 class Hand

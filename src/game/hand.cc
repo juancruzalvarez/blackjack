@@ -1,6 +1,6 @@
 #include "hand.h"
 
-namespace blackjack {
+namespace bj {
 
 Hand::Hand() {}
 

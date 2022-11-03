@@ -4,7 +4,7 @@
 #include "card.h"
 #include <vector>
 
-namespace blackjack {
+namespace bj {
 
 class Shoe {
 

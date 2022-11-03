@@ -3,7 +3,7 @@
 
 #include "strategy.h"
 
-namespace blackjack {
+namespace bj {
 
 class ImprovedBasicStrategy : public Strategy {
    
