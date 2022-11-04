@@ -1,2 +1,16 @@
- srand(time(0))  should be called at the start of main
+srand(time(0))  should be called at the start of main
  can u hit after doubling aces rules need to be implemented yet.
+make player have the actual functions
+see card
+on shuffle
+play
+bet
+and such
+and then it calls strategy and betting strategy functions.
+
+make sub namespaces
+
+bj:: for base elements like game, player, hand, shoe
+bj::str:: for strategys
+bj::str::count:: for count values and bet rangue functions
+bj::sim:: for simulations

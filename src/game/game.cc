@@ -33,7 +33,7 @@ void Game::DoRound()
    Round *rounds[kMaxPlayersPerTable];
    for (int i = 0; i < players.size(); i++)
    {
-      bets[i] = players[i]->strategy->bet(rules.min_bet, rules.max_bet);
+      bets[i] = players[i]->Bet(rules.min_bet, rules.max_bet);
    }
    Card dealer_up = DrawCard();
    Card dealer_down = shoe.DrawCard(); // We dont use game DrawCard here becouse the players do not see this card until the end of the round.
@@ -53,19 +53,19 @@ void Game::DoRound()
          for (int i = 0; i < players.size(); i++)
          {
             // Insurance bet is half of the players bet, and it pays 2:1
-            if (players[i]->strategy->wants_insurance())
+            if (players[i]->WantsInsurance())
             {
                if (dealer_hand.IsBlackJack())
                {
                   // Dealer has blackjack so the player wins insurance bet.
                   // Since its half the current player bet and pays 2:1, the player gets paid back their full bet.
-                  players[i]->current_chips += bets[i];
+                  players[i]->AddChips(bets[i]);
                   house_profit -= bets[i];
                }
                else
                {
                   // Dealer doesent have blackjack, so the player losses the insurance bet, wich is half of their original bet.
-                  players[i]->current_chips -= bets[i] * 0.5;
+                  players[i]->AddChips(-0.5 * bets[i]);
                   house_profit += bets[i] * 0.5;
                }
             }
@@ -79,14 +79,14 @@ void Game::DoRound()
          {
             if (!hands[i].IsBlackJack())
             {
-               players[i]->current_chips -= bets[i];
+               players[i]->AddChips(-bets[i]);
                house_profit += bets[i];
             }
          }
 
          // Show all players the dealers down card.
          for (const auto &p : players)
-            p->strategy->see_card(dealer_down);
+            p->SeeCard(dealer_down);
 
          // After this the round is over.
          return;
@@ -119,13 +119,13 @@ void Game::DoRound()
       int round_result = bets[i] * rounds[i]->decide_round(dealer_value);
       // decide_round returns the value of the round for the player.
       house_profit -= round_result;
-      players[i]->current_chips += round_result;
+      players[i]->AddChips(round_result);
    }
 
    if ( shoe.GetShoePenetration() > rules.penetration_before_shuffle) {
       shoe.Shuffle();
       for(const auto& p : players)
-         p->strategy->on_shuffle(rules.decks);
+         p->OnShuffle(rules.decks);
    }
 }
 
@@ -144,7 +144,7 @@ Round *Game::DoPlayerRound(Player *player, Hand player_hand, Card dealer_up, Pla
    if (player_hand.IsBlackJack())
       return new BJRound{rules.bj_3_to_2};
 
-   PlayerAction action = player->strategy->play(player_hand, dealer_up, options);
+   PlayerAction action = player->Play(player_hand, dealer_up, options);
    
    switch (action)
    {
@@ -192,7 +192,7 @@ Round *Game::DoPlayerRound(Player *player, Hand player_hand, Card dealer_up, Pla
             return new BustRound{};
          }
          // After hitting the player cant split, double or surrender.
-         action = player->strategy->play(player_hand, dealer_up, {false, false, false, rules.can_DAS, options.max_splits, options.current_splits});
+         action = player->Play(player_hand, dealer_up, {false, false, false, rules.can_DAS, options.max_splits, options.current_splits});
       } while (action == PlayerAction::HIT);
 
       return new ToBeDecidedRound{player_hand.Value()};
@@ -218,7 +218,7 @@ Card Game::DrawCard()
    Card c = shoe.DrawCard();
    for (const auto &p : players)
    {
-      p->strategy->see_card(c);
+      p->SeeCard(c);
    }
    return c;
 }

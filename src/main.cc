@@ -6,6 +6,8 @@
 #include "strategy/perfect_strategy.h"
 #include "strategy/chart.h"
 #include "strategy/chart_strategy.h"
+#include "strategy/count_betting_strategy.h"
+#include "strategy/min_betting_strategy.h"
 
 std::string action_to_str(bj::ChartAction a)
 {
@@ -45,20 +47,44 @@ int main()
 
    bj::Chart chart;
    chart.Init("test_chart.bjc");
-   bj::Player* perfect_strategy_player = new bj::Player{10000,10000, new bj::PerfectStrategy{bj::kStandardRules2Deck.decks}};
-   bj::Player* basic_strategy_player = new bj::Player{10000,10000, new bj::ChartStrategy{chart}}; 
-   bj::Player* bad = new bj::Player{10000,10000,new bj::ImprovedBasicStrategy{}};
+   bj::Player *perfect = new bj::Player{
+      50000,
+      new bj::PerfectStrategy{2},
+      new bj::MinBettingStrategy{}
+   };
+
+   bj::Player *basic = new bj::Player{
+      50000,
+      new bj::ChartStrategy{chart},
+      new bj::MinBettingStrategy{}
+   };
+
+   bj::Player *hi_lo = new bj::Player{
+      50000,
+      new bj::ChartStrategy{chart},
+      new bj::CountBettingStrategy{bj::count::kHiLoValues, bj::count::basic_betting, 2}
+   };
+
+   bj::Player *hi_op_ii = new bj::Player{
+      50000,
+      new bj::ChartStrategy{chart},
+      new bj::CountBettingStrategy{bj::count::kHiOpIIValues, bj::count::basic_betting, 2}
+   };
+   
+   
 
    srand(time(0)) ;
 
-  bj::Game game{bj::kStandardRules2Deck, {perfect_strategy_player, basic_strategy_player, bad}};
-  for (int i = 0; i<15000; i++) {
+   bj::Game game{bj::kStandardRules2Deck, {perfect}};
+   for (int i = 0; i<10000; i++) {
      game.DoRound();
 
-  }
-   std::cout<<"perfect_strategy player chips:"<<perfect_strategy_player->current_chips<<"\n";
-  std::cout<<"basic_strategy player chips:"<<basic_strategy_player->current_chips<<"\n";
-  std::cout<<"bad player chips:"<<bad->current_chips<<"\n";
+   }
+     std::cout<<"p chips:"<<perfect->CurrentChips()<<"\n";
+
+   std::cout<<"basic chips:"<<basic->CurrentChips()<<"\n";
+  std::cout<<"hi_lo chips:"<<hi_lo->CurrentChips()<<"\n";
+  std::cout<<"hi_op_ii chips:"<<hi_op_ii->CurrentChips()<<"\n";
 
    /*std::cout<<"Hand test: \n"; 6343 - 6878
    int go_again =    1;

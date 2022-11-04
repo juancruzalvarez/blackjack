@@ -1,7 +1,7 @@
 #ifndef RULES_H
 #define RULES_H
 
-namespace blackjack {
+namespace bj {
 
    struct Rules
    {
@@ -25,7 +25,7 @@ namespace blackjack {
       true,    // Blackjack pays 3:2.
       true,    // Players are offered insurance on dealer up card ace.
       false,   // Players cannot hit after splitting aces.
-      3,       // Player is allowed to split their hand a maximum of 3 times.
+      1,       // Player is allowed to split their hand a maximum of 3 times.
       50, 1000,  // Betting rangue [5 : 100]
       0.7,     // 70% of the shoe is seen before it gets shuffled again.
    };
