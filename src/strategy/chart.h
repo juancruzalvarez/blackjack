@@ -29,6 +29,12 @@ namespace bj {
 
    struct ChartKey {
       int player_total, dealer_up;
+      inline bool operator< (const ChartKey& rhs) const { 
+         return (player_total < rhs.player_total) || (dealer_up < rhs.dealer_up); 
+      }
+      inline bool operator== (const ChartKey& rhs) const { 
+         return (player_total == rhs.player_total) && (dealer_up == rhs.dealer_up); 
+         }
    };
 
    class Chart {

@@ -9,38 +9,6 @@
 #include "strategy/count_betting_strategy.h"
 #include "strategy/min_betting_strategy.h"
 
-std::string action_to_str(bj::ChartAction a)
-{
-   switch (a)
-   {
-   case bj::ChartAction::HIT:
-      return "HIT";
-   case bj::ChartAction::STAND:
-      return "STAND";
-   case bj::ChartAction::DOUBLE_OR_HIT:
-      return "DOUBLE/HIT";
-   case bj::ChartAction::DOUBLE_OR_STAND:
-      return "DOUBLE/STAND";
-   default:
-      return "INVALID";
-   }
-}
-
-std::string action_to_str(bj::PairChartAction a)
-{
-   switch (a)
-   {
-   case bj::PairChartAction::SPLIT:
-      return "SPLIT";
-   case bj::PairChartAction::DONT_SPLIT:
-      return "DONT SPLIT";
-   case bj::PairChartAction::SPLIT_IF_DAS:
-      return "SPLIT IF DAS";
-   default:
-      return "INVALID";
-   }
-}
-
 
 int main()
 {
@@ -75,38 +43,18 @@ int main()
 
    srand(time(0)) ;
 
-   bj::Game game{bj::kStandardRules2Deck, {perfect}};
-   for (int i = 0; i<10000; i++) {
+   bj::Game game{bj::kStandardRules2Deck, {hi_lo, hi_op_ii, basic}};
+   for (int i = 0; i<1000000; i++) {
      game.DoRound();
-
    }
-     std::cout<<"p chips:"<<perfect->CurrentChips()<<"\n";
 
+   std::cout<<"p chips:"<<perfect->CurrentChips()<<"\n";
    std::cout<<"basic chips:"<<basic->CurrentChips()<<"\n";
-  std::cout<<"hi_lo chips:"<<hi_lo->CurrentChips()<<"\n";
-  std::cout<<"hi_op_ii chips:"<<hi_op_ii->CurrentChips()<<"\n";
-
-   /*std::cout<<"Hand test: \n"; 6343 - 6878
-   int go_again =    1;
-   while(go_again) {
-      std::cout<<"Enter cards:(0 to end)\n";
-      bj::Card card = 1;
-      bj::Hand hand{};
-      for(;;){
-         std::cin>>card;
-         if (card == 0)
-         break;
-         hand.AddCard(card);
-      }
-      std::cout<<"Hand:\n";
-      std::cout<<"Value:"<<hand.Value()<<"\n";
-      std::cout<<"Bust:"<<hand.Bust()<<"\n";
-      std::cout<<"Bj:"<<hand.Isbj()<<"\n";
-      std::cout<<"CanSplit:"<<hand.CanSplit()<<"\n";
-      std::cout<<"IsSoft:"<<hand.IsSoft()<<"\n";
-      std::cout<<"Enter 1 to go again.\n";1
-      std::cin>>go_again;
-   }*/
+   std::cout<<"hi_lo chips:"<<hi_lo->CurrentChips()<<"\n";
+   std::cout<<"hi_op_ii chips:"<<hi_op_ii->CurrentChips()<<"\n";
+   std::cout<<"bEV: "<<(basic->CurrentChips()-basic->StartingChips())/1000000.0;
+   std::cout<<"hlEV: "<<(hi_lo->CurrentChips()-hi_lo->StartingChips())/1000000.0;
+   std::cout<<"hoiiEV: "<<(hi_op_ii->CurrentChips()-hi_op_ii->StartingChips())/1000000.0;
 
    return 0;
 }

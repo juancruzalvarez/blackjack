@@ -134,7 +134,6 @@ namespace bj
       auto splited = split(file_content);
       int current_line = 0;
       int hard_total = 20, soft_total = 20;
-      std::cout << "okbefore soft and hard.";
       // read hard and soft totals:
       while (current_line < splited.size() && (hard_total >= 4 || soft_total >= 12))
       {
@@ -150,7 +149,7 @@ namespace bj
             if (action == ChartAction::INVALID_ACTION)
                return ChartError::FILE_INVALID;
             for (int i = 2; i <= 11; i++)
-               (hard_total >= 4 ? hard_totals : soft_totals).insert({{total, i}, action});
+               (hard_total >= 4 ? hard_totals : soft_totals).insert({ChartKey{total, i}, action});
             break;
          }
          case 10:
@@ -162,7 +161,7 @@ namespace bj
                auto action = get_action(line_content[i - 2]);
                if (action == ChartAction::INVALID_ACTION)
                   return ChartError::FILE_INVALID;
-               (hard_total >= 4 ? hard_totals : soft_totals).insert({{total, i}, action});
+               (hard_total >= 4 ? hard_totals : soft_totals).insert({ChartKey{total, i}, action});
             }
             break;
          }
@@ -171,7 +170,6 @@ namespace bj
          }
          current_line++;
       }
-      std::cout << "okafter soft and hard." << hard_total << " " << soft_total << "\n";
       if (hard_total >= 4 || soft_total >= 12)
          return ChartError::FILE_INVALID;
 
@@ -190,7 +188,7 @@ namespace bj
             if (action == PairChartAction::INVALID_ACTION)
                return ChartError::FILE_INVALID;
             for (int i = 2; i <= 11; i++)
-               pairs.insert({{pair_total, i}, action});
+               pairs.insert({ChartKey{pair_total, i}, action});
             break;
          }
          case 10:
@@ -202,7 +200,7 @@ namespace bj
                auto action = get_pair_action(line_content[i - 2]);
                if (action == PairChartAction::INVALID_ACTION)
                   return ChartError::FILE_INVALID;
-               pairs.insert({{pair_total, i}, action});
+               pairs.insert({ChartKey{pair_total, i}, action});
             }
             break;
          }
@@ -215,7 +213,6 @@ namespace bj
       }
       if (pair_total >= 4)
          return ChartError::FILE_INVALID;
-      std::cout << "okafter pair and hard." << pair_total << "\n";
 
       if (current_line < splited.size())
       {
@@ -226,7 +223,7 @@ namespace bj
          int i = 1;
          while (i < line_content.size())
          {
-            surrenders.insert({{player_total, std::stoi(line_content[i])}, true});
+            surrenders.insert({ChartKey{player_total, std::stoi(line_content[i])}, true});
             i++;
          }
          current_line++;
@@ -244,25 +241,17 @@ namespace bj
 
    PairChartAction Chart::ShouldSplit(int player_total, int dealer_up)
    {
+      if(pairs.count(ChartKey{player_total, dealer_up}) == 0)
+         return PairChartAction::DONT_SPLIT;
+
       return pairs[ChartKey{player_total, dealer_up}];
    }
 
    ChartAction Chart::TotalPlay(int player_total, int dealer_up, bool is_soft)
    {
+      if((is_soft? soft_totals: hard_totals).count(ChartKey{player_total, dealer_up}) == 0)
+         return ChartAction::HIT;
       ChartKey key = ChartKey{player_total, dealer_up};
       return is_soft ? soft_totals[key] : hard_totals[key];
    }
-
-   bool operator<(const ChartKey &l, const ChartKey &r)
-   {
-      if(l.player_total == r.player_total)
-         return l.dealer_up < r.dealer_up;
-      return l.player_total < r.player_total;
-   }
-
-   bool operator==(const ChartKey &l, const ChartKey &r)
-   {
-      return l.player_total == r.player_total && l.dealer_up == r.dealer_up;
-   }
-
 }

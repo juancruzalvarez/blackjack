@@ -17,21 +17,21 @@ enum class RoundResult
 class Round
 {
 public:
-   virtual int decide_round(int dealer_count) = 0;
+   virtual double decide_round(int dealer_count) = 0;
 };
 
 class SurrenderRound : public Round
 {
 public:
    SurrenderRound();
-   int decide_round(int dealer_count);
+   double decide_round(int dealer_count);
 };
 
 class BJRound : public Round
 {
 public:
    BJRound(bool bj3_2);
-   int decide_round(int dealer_count);
+   double decide_round(int dealer_count);
 
 private:
    bool pays_3_to_2;
@@ -41,7 +41,7 @@ class DoubleRound : public Round
 {
 public:
    DoubleRound(int player_count);
-   int decide_round(int dealer_count);
+   double decide_round(int dealer_count);
 
 private:
    int player_count;
@@ -51,7 +51,7 @@ class SplitRound : public Round
 {
 public:
    SplitRound(Round *a, Round *b);
-   int decide_round(int dealer_count);
+   double decide_round(int dealer_count);
 
 private:
    Round *a, *b;
@@ -61,14 +61,14 @@ class BustRound : public Round
 {
 public:
    BustRound();
-   int decide_round(int dealer_count);
+   double decide_round(int dealer_count);
 };
 
 class ToBeDecidedRound : public Round
 {
 public:
    ToBeDecidedRound(int player_count);
-   int decide_round(int dealer_count);
+   double decide_round(int dealer_count);
 private:
    int player_count;
 };
