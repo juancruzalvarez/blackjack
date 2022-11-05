@@ -15,10 +15,16 @@ int main()
 
    bj::Chart chart;
    chart.Init("test_chart.bjc");
-   bj::Player *perfect = new bj::Player{
+   bj::Player *perfect_hi_lo = new bj::Player{
       50000,
       new bj::PerfectStrategy{2},
-      new bj::MinBettingStrategy{}
+      new bj::CountBettingStrategy{bj::count::kHiLoValues, bj::count::basic_betting, 2}
+   };
+
+   bj::Player *perfect_hi_op_ii = new bj::Player{
+      50000,
+      new bj::PerfectStrategy{2},
+      new bj::CountBettingStrategy{bj::count::kHiOpIIValues, bj::count::basic_betting, 2}
    };
 
    bj::Player *basic = new bj::Player{
@@ -43,18 +49,19 @@ int main()
 
    srand(time(0)) ;
 
-   bj::Game game{bj::kStandardRules2Deck, {hi_lo, hi_op_ii, basic}};
-   for (int i = 0; i<1000000; i++) {
+   bj::Game game{bj::kStandardRules2Deck, {perfect_hi_lo, perfect_hi_op_ii}};
+   for (int i = 0; i<1000; i++) {
      game.DoRound();
    }
 
-   std::cout<<"p chips:"<<perfect->CurrentChips()<<"\n";
-   std::cout<<"basic chips:"<<basic->CurrentChips()<<"\n";
-   std::cout<<"hi_lo chips:"<<hi_lo->CurrentChips()<<"\n";
-   std::cout<<"hi_op_ii chips:"<<hi_op_ii->CurrentChips()<<"\n";
-   std::cout<<"bEV: "<<(basic->CurrentChips()-basic->StartingChips())/1000000.0;
-   std::cout<<"hlEV: "<<(hi_lo->CurrentChips()-hi_lo->StartingChips())/1000000.0;
-   std::cout<<"hoiiEV: "<<(hi_op_ii->CurrentChips()-hi_op_ii->StartingChips())/1000000.0;
+   std::cout<<"p h:"<<perfect_hi_lo->CurrentChips()<<"\n";
+   std::cout<<"pho:"<<perfect_hi_op_ii->CurrentChips()<<"\n";
+   //std::cout<<"hi_lo chips:"<<hi_lo->CurrentChips()<<"\n";
+   //std::cout<<"hi_op_ii chips:"<<hi_op_ii->CurrentChips()<<"\n";
+   std::cout<<"phiEV: "<<(perfect_hi_lo->CurrentChips()-perfect_hi_op_ii->StartingChips())/1000.0;
+   std::cout<<"bhoEV: "<<(perfect_hi_op_ii->CurrentChips()-perfect_hi_op_ii->StartingChips())/1000.0;
+  // std::cout<<"hlEV: "<<(hi_lo->CurrentChips()-hi_lo->StartingChips())/1000000.0;
+  // std::cout<<"hoiiEV: "<<(hi_op_ii->CurrentChips()-hi_op_ii->StartingChips())/1000000.0;
 
    return 0;
 }

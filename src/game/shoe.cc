@@ -35,6 +35,8 @@ void Shoe::Shuffle()
 
 Card Shoe::DrawCard()
 {
+   if(cards.size() <= 0)
+      Shuffle();
    Card ret = cards.back();
    cards.pop_back();
    return ret;
