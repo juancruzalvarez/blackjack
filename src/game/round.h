@@ -1,6 +1,7 @@
 #ifndef ROUND_H
 #define ROUND_H
 
+#include <string>
 
 namespace bj {
 
@@ -18,6 +19,7 @@ class Round
 {
 public:
    virtual double decide_round(int dealer_count) = 0;
+   virtual std::string ToString() = 0;
 };
 
 class SurrenderRound : public Round
@@ -25,6 +27,7 @@ class SurrenderRound : public Round
 public:
    SurrenderRound();
    double decide_round(int dealer_count);
+   std::string ToString();
 };
 
 class BJRound : public Round
@@ -32,7 +35,7 @@ class BJRound : public Round
 public:
    BJRound(bool bj3_2);
    double decide_round(int dealer_count);
-
+   std::string ToString();
 private:
    bool pays_3_to_2;
 };
@@ -42,7 +45,7 @@ class DoubleRound : public Round
 public:
    DoubleRound(int player_count);
    double decide_round(int dealer_count);
-
+   std::string ToString();
 private:
    int player_count;
 };
@@ -52,7 +55,7 @@ class SplitRound : public Round
 public:
    SplitRound(Round *a, Round *b);
    double decide_round(int dealer_count);
-
+   std::string ToString();
 private:
    Round *a, *b;
 };
@@ -62,6 +65,7 @@ class BustRound : public Round
 public:
    BustRound();
    double decide_round(int dealer_count);
+   std::string ToString();
 };
 
 class ToBeDecidedRound : public Round
@@ -69,6 +73,7 @@ class ToBeDecidedRound : public Round
 public:
    ToBeDecidedRound(int player_count);
    double decide_round(int dealer_count);
+   std::string ToString();
 private:
    int player_count;
 };

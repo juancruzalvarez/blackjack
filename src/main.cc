@@ -49,17 +49,15 @@ int main()
 
    srand(time(0)) ;
 
-   bj::Game game{bj::kStandardRules2Deck, {perfect_hi_lo, perfect_hi_op_ii}};
-   for (int i = 0; i<1000; i++) {
+   bj::Game game{bj::kStandardRules2Deck, {hi_lo}};
+   for (int i = 0; i<50; i++) {
      game.DoRound();
    }
 
-   std::cout<<"p h:"<<perfect_hi_lo->CurrentChips()<<"\n";
-   std::cout<<"pho:"<<perfect_hi_op_ii->CurrentChips()<<"\n";
+   std::cout<<"pho:"<<hi_lo->CurrentChips()<<"\n";
    //std::cout<<"hi_lo chips:"<<hi_lo->CurrentChips()<<"\n";
    //std::cout<<"hi_op_ii chips:"<<hi_op_ii->CurrentChips()<<"\n";
-   std::cout<<"phiEV: "<<(perfect_hi_lo->CurrentChips()-perfect_hi_op_ii->StartingChips())/1000.0;
-   std::cout<<"bhoEV: "<<(perfect_hi_op_ii->CurrentChips()-perfect_hi_op_ii->StartingChips())/1000.0;
+   std::cout<<"bhoEV: "<<(hi_lo->CurrentChips()-perfect_hi_op_ii->StartingChips())/1000.0;
   // std::cout<<"hlEV: "<<(hi_lo->CurrentChips()-hi_lo->StartingChips())/1000000.0;
   // std::cout<<"hoiiEV: "<<(hi_op_ii->CurrentChips()-hi_op_ii->StartingChips())/1000000.0;
 

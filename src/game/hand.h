@@ -2,6 +2,7 @@
 #define HAND_H
 
 #include <vector>
+#include <string>
 
 #include "card.h"
 
@@ -25,6 +26,7 @@ public:
    bool IsSoft();      // Returns true if the hand has an ace that can be counted as a 1 or as an 11 without busting the hand.
    std::pair<Hand, Hand> Split(); //Returns a pair of hands, one with the first card of the hand, and another with the second. Asumes the hand has only two cards.
    void RemoveLastCard();
+   std::string ToString();
 private:
    std::vector<Card> cards;
    

@@ -25,7 +25,7 @@ namespace bj {
       true,    // Blackjack pays 3:2.
       true,    // Players are offered insurance on dealer up card ace.
       false,   // Players cannot hit after splitting aces.
-      1,       // Player is allowed to split their hand a maximum of 3 times.
+      2,       // Player is allowed to split their hand a maximum of 3 times.
       100, 1000,  // Betting rangue [50 : 1000]
       0.7,     // 70% of the shoe is seen before it gets shuffled again.
    };

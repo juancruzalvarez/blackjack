@@ -1,5 +1,7 @@
 #include "hand.h"
 
+#include <string>
+
 namespace bj {
 
 Hand::Hand() {}
@@ -96,6 +98,13 @@ bool Hand::IsSoft()
 
 void Hand::RemoveLastCard() {
    cards.pop_back();
+}
+
+std::string Hand::ToString() {
+   auto ret = std::string{};
+   for(const auto c : cards)
+      ret += std::to_string(c) + "-";
+   return ret;
 }
 
 }

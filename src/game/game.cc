@@ -117,6 +117,7 @@ void Game::DoRound()
    for (int i = 0; i < players.size(); i++)
    {
       int round_result = bets[i] * rounds[i]->decide_round(dealer_value);
+      std::cout<<"Result: "<< std::to_string(round_result)<<"\n";
       // decide_round returns the value of the round for the player.
       house_profit -= round_result;
       players[i]->AddChips(round_result);
@@ -140,20 +141,27 @@ void Game::DoRound()
 // If they stand the hand is decided against the dealer.
 Round *Game::DoPlayerRound(Player *player, Hand player_hand, Card dealer_up, PlayOptions options)
 {
+   std::cout<<"player_hand:"<<player_hand.ToString()<<"\n";
+   Round* res;
 
    if (player_hand.IsBlackJack())
+   {
+      std::cout<<"BJ\n";
       return new BJRound{rules.bj_3_to_2};
+   }
 
    PlayerAction action = player->Play(player_hand, dealer_up, options);
    
    switch (action)
    {
    case PlayerAction::SURRENDER:
+      std::cout<<"Surrender\n";
       return new SurrenderRound{};
 
    case PlayerAction::DOUBLE:
    {
       player_hand.AddCard(DrawCard());
+      std::cout<<"Double: "<<std::to_string(player_hand.Value())<<"\n";
       return new DoubleRound{player_hand.Value()};
    }
    case PlayerAction::SPLIT:
@@ -175,26 +183,29 @@ Round *Game::DoPlayerRound(Player *player, Hand player_hand, Card dealer_up, Pla
                                          splited_hand.second,
                                          dealer_up,
                                          options);
-
+      std::cout<<"Split:\n";
       return new SplitRound{first_round, second_round};
    }
    
    case PlayerAction::STAND:
+      std::cout<<"Stand: "<<std::to_string(player_hand.Value())<<"\n";
       return new ToBeDecidedRound{player_hand.Value()};
 
    case PlayerAction::HIT:
    {
       do
       {
+         std::cout<<"HIT\n";
          player_hand.AddCard(DrawCard());
          if (player_hand.Bust())
          {
+            std::cout<<"BUST\n";
             return new BustRound{};
          }
          // After hitting the player cant split, double or surrender.
          action = player->Play(player_hand, dealer_up, {false, false, false, rules.can_DAS, options.max_splits, options.current_splits});
       } while (action == PlayerAction::HIT);
-
+      std::cout<<"Stand: "<<std::to_string(player_hand.Value());
       return new ToBeDecidedRound{player_hand.Value()};
    }
    }
